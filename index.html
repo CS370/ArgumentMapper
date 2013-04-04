@@ -1,0 +1,126 @@
+<!--
+    The app's view. The presentation framework fills this with content.
+
+    Uses the Angular.JS presentation framework, together with the jQuery and jQuery-UI libraries.
+
+    Created by Tyler Young on 4 April 2013.
+-->
+<!doctype html>
+<html ng-app><!-- the ng-app tag says to treat the whole HTML doc as our Angular.JS app -->
+<head>
+    <!-- Twitter Bootstrap stylesheet -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- jQuery, for Javascript++ -->
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+
+    <!-- The jQuery UI library, because mature UI frameworks
+         beat the hell out of building this stuff from scratch -->
+    <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+
+    <!-- include the Angular.js presentation framework -->
+    <script src="lib/angular.min.js"></script>
+
+    <!-- Our controller (presenter) for handling the premises -->
+    <script type="text/javascript" src="js/canvasController.js"></script>
+
+    <!-- The JS to make dragging-and-dropping premise boxes happen -->
+    <script type="text/javascript" src="js/makeDraggable.js"></script>
+
+
+    <!-- Misc. styling, just playing with the premise boxes -->
+    <style>
+        body {
+            padding-bottom: 5em;
+        }
+        #theCanvas {
+            position: relative;
+            background-color: #ddd;
+            border: 1px solid #333;
+            border-radius: 4px;
+            height: 400px;
+            width: 100%;
+            padding: 1em;
+        }
+        .premise {
+            background-color: #fff;
+            border: 1px solid #333;
+            border-radius: 4px;
+            width: 15em;
+            padding: 1em;
+            margin: 0.5em;
+            position:  absolute;
+            left: 0;
+            top: 0; /* set these so Chrome doesn't return 'auto' from getComputedStyle */
+            box-shadow: 0 0 7px #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- The header. Nothing to see here. -->
+    <div class="hero-unit">
+        <div class="container">
+            <h1>Argument Mapper</h1>
+            <p class="lead">It's the best.</p>
+        </div>
+    </div>
+
+
+    <div class="container">
+        <!-- Invoke the canvas controller (really more of a presenter), defined in js/canvasController.js.
+            It adds a few things to its $scope variable:
+                - a title
+                - a list of premises, each of which contain
+                    - a name
+                    - a snippet describing them
+                    - a top edge location (in pixels)
+                    - a left edge location (in pixels)
+            -->
+        <div ng-controller="CanvasPresenter" id="theCanvas">
+            <h2>{{title}}</h2>
+            <p>Total number of premises: {{premises.length}}</p>
+            <div ng-repeat="premise in premises" class="premise" draggable="true" style="top: {{premise.top}}px; left: {{premise.left}}px">
+                <h4>{{premise.title}}</h4>
+                <p>Contents: {{premise.content}}</p>
+            </div>
+        </div>
+
+        <hr />
+
+        <h2>Miscellaneous Angular.JS examples</h2>
+
+        <!-- Data binding! The binding tells Angular that it should evaluate this expression and insert
+        the result into the DOM in place of the binding.
+
+        (In this case, it concatenates the string "Javascript" to the strings of a single space and
+        "style!".)
+
+        Rather than a one-time insert, as you'll see in the following code, a binding will
+        result in efficient, continuous updates whenever the result of the
+        expression evaluation changes. -->
+        <p>This is {{'Javascript' + ' ' + 'style!'}}</p>
+
+        <!-- One more example of Javascript expression evaluation -->
+        <p>1 + 2 = {{ 1 + 2 }}</p>
+
+        <!-- Data binding, mo betta.
+        The ng-model="yourName" bit tells Angular that the text in this field
+        will be the model (in the MVC/MVP sense of the word) for this scope's
+        variable called yourName.
+
+        Thus, when you type in the box, you change the yourName variable and
+        instantly update all copies of that variable---the "Hello {{yourName}}"
+        bit updates instantly!
+        -->
+        <label>Name:</label>
+        <input type="text" ng-model="yourName" placeholder="Enter a name here">
+        <hr>
+        <h1>Hello {{yourName}}!!!!</h1>
+
+    </div>
+</body>
+
+
+</html>
