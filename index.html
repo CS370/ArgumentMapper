@@ -8,8 +8,8 @@
 <!doctype html>
 <html ng-app><!-- the ng-app tag says to treat the whole HTML doc as our Angular.JS app -->
 <head>
-    <!-- Twitter Bootstrap stylesheet -->
-    <link href="css/bootstrap.css" rel="stylesheet">
+    <!-- Twitter Bootstrap stylesheet, "Slate" theme -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
     <!-- jQuery, for Javascript++ -->
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
@@ -17,6 +17,9 @@
     <!-- The jQuery UI library, because mature UI frameworks
          beat the hell out of building this stuff from scratch -->
     <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+
+    <!-- Bootstrap Javascript, for more UI stuff -->
+    <script src="js/bootstrap.min.js"></script>
 
     <!-- include the Angular.js presentation framework -->
     <script src="lib/angular.min.js"></script>
@@ -32,17 +35,38 @@
     <style>
         body {
             padding-bottom: 5em;
+            padding-top: 40px;
+        }
+        h3, h4 {
+            text-shadow: none;
+        }
+        .navbar-fixed-top .container {
+            width: 95%;
+        }
+        .navbar-inverse .brand.active {
+            color: #ddd;
+        }
+        .dropdown-menu {
+            margin: -2px 0 0;
+        }
+        #sidebar {
+            padding: 1em 0 1em 1em;
+        }
+        .nav-list, .nav>li>a {
+            background-color: transparent;
+            box-shadow: none;
+            padding-right: 0;
         }
         #theCanvas {
             position: relative;
-            background-color: #ddd;
+            background: url("img/fabricBackground.png") repeat;
             border: 1px solid #333;
-            border-radius: 4px;
-            height: 400px;
-            width: 100%;
+            border-radius: 0 0 4px 4px;
+            height: 600px;
             padding: 1em;
+            color: #222;
         }
-        .premise {
+        .premise, .premise-demo, .rebuttal, .rebuttal-demo {
             background-color: #fff;
             border: 1px solid #333;
             border-radius: 4px;
@@ -53,22 +77,93 @@
             left: 0;
             top: 0; /* set these so Chrome doesn't return 'auto' from getComputedStyle */
             box-shadow: 0 0 7px #666;
+            cursor: move;
+        }
+        .premise-demo, .rebuttal-demo {
+            display: block;
+            position: inherit;
+            padding: 0.5em;
+            color: #333;
+            margin: 0;
+            text-shadow: none;
+            width: inherit;
+            cursor: pointer;
+        }
+        .premise-demo:hover {
+            color: #666;
+        }
+        .rebuttal, .rebuttal-demo {
+            background-color: #da4f49;
+            background-image: linear-gradient(to bottom,#ee5f5b,#bd362f);
+            color: #222;
+        }
+        .rebuttal-demo:hover {
+            color: #333;
         }
     </style>
 </head>
 
-<body>
-
-    <!-- The header. Nothing to see here. -->
-    <div class="hero-unit">
-        <div class="container">
-            <h1>Argument Mapper</h1>
-            <p class="lead">It's the best.</p>
+<body id="top" data-spy="scroll">
+    <!-- The nav bar at the top of the screen. This is stock Bootstrap. -->
+    <!-- @TODO: make this programmatic from the Presenter. -->
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand active" href="index.html">Argument Mapper</a>
+                <div class="nav-collapse collapse" id="main-menu">
+                    <ul class="nav" id="main-menu-left">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">File <b class="caret"></b></a>
+                            <ul class="dropdown-menu" id="swatch-menu">
+                                <li><a href="#">New</a></li>
+                                <li><a href="#">Save</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Share</a></li>
+                                <li><a href="#">Print</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#">Lorem</a></li>
+                        <li><a href="#">Ipsum</a></li>
+                        <li class="dropdown" id="preview-menu">
+                            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dolar <b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Sit amet</a></li>
+                                <li><a href="#">Concatenur</a></li>
+                                <li class="divider"></li>
+                                <li><a href="#">Meta</a></li>
+                                <li><a href="#">Gargoyle</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <ul class="nav pull-right" id="main-menu-right">
+                        <li><a rel="tooltip" target="_blank" href="https://github.com/CS370/ArgumentMapper/" title="View on GitHub">View on GitHub <i class="icon-share-alt"></i></a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Primary content of page -->
+    <div class="row-fluid">
+        <!-- The sidebar -->
+        <!-- TODO: Link these buttons up to the canvas -->
+        <aside id="sidebar" class="span2">
+            <ul class="nav nav-list">
+                <li class="nav-header">Add an element</li>
+                <li><a href="#"><span class="premise-demo">Add a premise box</span></a></li>
+                <li><a href="#"><span class="rebuttal-demo">Add a rebuttal box</span></a></li>
+                <li><a href="#">Add a connector</a></li>
+                <li class="nav-header">Do something else</li>
+                <li><a href="#">Make a sandwich</a></li>
+                <li><a href="#">Take a shower</a></li>
+            </ul>
+        </aside>
 
-    <div class="container">
         <!-- Invoke the canvas controller (really more of a presenter), defined in js/canvasController.js.
             It adds a few things to its $scope variable:
                 - a title
@@ -78,7 +173,7 @@
                     - a top edge location (in pixels)
                     - a left edge location (in pixels)
             -->
-        <div ng-controller="CanvasPresenter" id="theCanvas">
+        <div ng-controller="CanvasPresenter" id="theCanvas" class="span10">
             <h2>{{title}}</h2>
             <p>Total number of premises: {{premises.length}}</p>
             <div ng-repeat="premise in premises" class="premise" draggable="true" style="top: {{premise.top}}px; left: {{premise.left}}px">
@@ -87,8 +182,9 @@
             </div>
         </div>
 
-        <hr />
+    </div>
 
+    <div class="container">
         <h2>Miscellaneous Angular.JS examples</h2>
 
         <!-- Data binding! The binding tells Angular that it should evaluate this expression and insert
