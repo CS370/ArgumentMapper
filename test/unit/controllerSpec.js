@@ -9,31 +9,27 @@
  */
 
 describe('Canvas presenter', function() {
+    it('should have 1 or more premises', function() {
+        var scope = {},
+            ctrl = new CanvasPresenter(scope);
 
-    describe('CanvasPresenter', function(){
+        expect(scope.premises.length).toBeGreaterThan(0);
+    });
 
-        it('should have 1 or more premises', function() {
-            var scope = {},
-                ctrl = new CanvasPresenter(scope);
+    it('should have a title', function() {
+        var scope = {},
+            ctrl = new CanvasPresenter(scope);
 
-            expect(scope.premises.length).toBeGreaterThan(0);
-        });
+        expect(scope.title.length).toBeGreaterThan(0);
+    });
 
-        it('should have a title', function() {
-            var scope = {},
-                ctrl = new CanvasPresenter(scope);
+    it('should have legal positions', function() {
+        var scope = {},
+            ctrl = new CanvasPresenter(scope);
 
-            expect(scope.title.length).toBeGreaterThan(0);
-        });
-
-        it('should have legal positions', function() {
-            var scope = {},
-                ctrl = new CanvasPresenter(scope);
-
-            scope.premises.forEach( function(premise){
-                expect(premise.top).toBeGreaterThan(0);
-                expect(premise.left).toBeGreaterThan(0);
-            });
+        scope.premises.forEach( function(premise){
+            expect(premise.top).toBeGreaterThan(0);
+            expect(premise.left).toBeGreaterThan(0);
         });
     });
 });

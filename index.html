@@ -29,8 +29,9 @@
     <script type="text/javascript" src="js/canvasController.js"></script>
 
     <!-- The JS to make dragging-and-dropping premise boxes happen -->
-    <script type="text/javascript" src="js/makeDraggable.js"></script>
+    <script type="text/javascript" src="js/setUpUI.js"></script>
 
+    <script src="js/autoresize.jquery.js"></script>
 
     <!-- Misc. styling, just playing with the premise boxes -->
     <style>
@@ -80,6 +81,35 @@
             top: 0; /* set these so Chrome doesn't return 'auto' from getComputedStyle */
             box-shadow: 0 0 7px #666;
             cursor: move;
+        }
+        textarea.premise-title {
+            border: none;
+            background: transparent;
+            box-shadow: none;
+            color: #222;
+            padding: 0;
+            font-weight: bold;
+            white-space: normal;
+            width:100%;
+            max-width: 100%;
+            resize: none !important;
+            -webkit-transition: border linear .2s,box-shadow linear .2s;
+            -moz-transition: border linear .2s,box-shadow linear .2s;
+            -o-transition: border linear .2s,box-shadow linear .2s;
+            transition: border linear .2s,box-shadow linear .2s;
+        }
+        textarea.premise-title:focus {
+            background-color: #fff;
+            border-color: rgba(82,168,236,0.9);
+            outline: 0;
+            outline: thin dotted 9;
+            -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(82,168,236,1.0);
+            -moz-box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(82,168,236,1.0);
+            box-shadow: inset 0 1px 1px rgba(0,0,0,0.075),0 0 8px rgba(82,168,236,1.0);
+            font-weight: normal;
+            padding: 0 3%;
+            width: 94%;
+            resize: auto;
         }
         .premise-demo, .rebuttal-demo {
             display: block;
@@ -180,7 +210,7 @@
             <h2>{{title}}</h2>
             <p>Total number of premises: {{premises.length}}</p>
             <div ng-repeat="premise in premises" class="premise" draggable="true" style="top: {{premise.top}}px; left: {{premise.left}}px">
-                <h4>{{premise.title}}</h4>
+                <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1">{{premise.title}}</textarea>
                 <p>Contents: {{premise.content}}</p>
             </div>
         </div>
