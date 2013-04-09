@@ -214,7 +214,7 @@
                     - a left edge location (in pixels)
             -->
         <div ng-controller="CanvasPresenter" id="theCanvas" class="span10">
-            <input value="{{title}}" class= "theTitle"></input>								
+            <input value="{{title}}" class="theTitle" />
             <p>Total number of premises: {{premises.length}}</p>
             <div ng-repeat="premise in premises" class="premise" draggable="true" style="top: {{premise.top}}px; left: {{premise.left}}px">
                 <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1">{{premise.title}}</textarea>

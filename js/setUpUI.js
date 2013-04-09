@@ -28,7 +28,7 @@ function makeElementsDraggable() {
         scroll: false,               // Don't scroll the element we're contained in
         grid: [ 5, 5 ],               // Snap to a 5px square grid
         stack: "#theCanvas div",    // Allow divs to be stacked within the canvas
-        distance: 20                 // Only move the div if it is dragged more than 20px (prevent accidents)
+        distance: 20,                 // Only move the div if it is dragged more than 20px (prevent accidents)
     });
 }
 
