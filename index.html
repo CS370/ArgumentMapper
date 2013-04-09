@@ -82,7 +82,7 @@
             box-shadow: 0 0 7px #666;
             cursor: move;
         }
-        textarea.premise-title {
+        textarea.premise-title,.theTitle {
             border: none;
             background: transparent;
             box-shadow: none;
@@ -98,7 +98,10 @@
             -o-transition: border linear .2s,box-shadow linear .2s;
             transition: border linear .2s,box-shadow linear .2s;
         }
-        textarea.premise-title:focus {
+	.theTitle{
+		font-size: 2em;
+	} 
+        textarea.premise-title:focus,.theTitle:focus {
             background-color: #fff;
             border-color: rgba(82,168,236,0.9);
             outline: 0;
@@ -111,6 +114,10 @@
             width: 94%;
             resize: auto;
         }
+	.theTitle:focus{
+		padding:0;
+		width:100%;
+	}	
         .premise-demo, .rebuttal-demo {
             display: block;
             position: inherit;
@@ -207,7 +214,7 @@
                     - a left edge location (in pixels)
             -->
         <div ng-controller="CanvasPresenter" id="theCanvas" class="span10">
-            <h2>{{title}}</h2>
+            <input value="{{title}}" class= "theTitle"></input>								
             <p>Total number of premises: {{premises.length}}</p>
             <div ng-repeat="premise in premises" class="premise" draggable="true" style="top: {{premise.top}}px; left: {{premise.left}}px">
                 <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1">{{premise.title}}</textarea>
