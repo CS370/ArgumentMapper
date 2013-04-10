@@ -9,6 +9,10 @@
  */
 
 function CanvasPresenter($scope) {
+    /**
+     * Returns a new ID which is not in conflict with any existing IDs in this document.
+     * @returns int A non-conflicting ID
+     */
     function getNewID() {
         var maxKnown = -1;
         for( var i = 0; i < $scope.premises.length; i++ ) {
@@ -36,6 +40,11 @@ function CanvasPresenter($scope) {
             "connectorLoc": 'left',
             "connectsTo": 1234}
     ];
+
+    /**
+     * Creates a new premise in the scope's list of premises.
+     * @usage $scope.premises.add();
+     */
     $scope.premises.add = function(){
         this.push({
             "id": getNewID(),
@@ -79,7 +88,7 @@ app.directive('premise',function() {
                         scope.model.top = element.css('top');
                         scope.model.left = element.css('left');
                     });
-                    connectPremises();
+                    redrawCanvas();
                 },
                 stop: function () {           // A dummy method called when a drag ends
                     console.log("Drag ended");

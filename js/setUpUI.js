@@ -10,13 +10,21 @@ var scope;
 var canvas;
 var context;
 
-
+/**
+ * Selects all premise-title textareas and forces them to automatically
+ * resize (vertically)
+ */
 function makeTextareaAutoResize() {
     $('textarea.premise-title').autoResize({ 'extraSpace': 0 });
     $("textarea.premise-title").trigger('change.dynSiz');
 }
 
-
+/**
+ * Returns the Presenter's copy (the model, loaded by canvasController.js)
+ * of the argument map element with the given ID.
+ * @param id int The ID of the premise to search for
+ * @returns A premise object
+ */
 function findInScope(id) {
     for( var i = 0; i < scope.premises.length; i++) {
         if( scope.premises[i].id == id ) {
@@ -30,14 +38,31 @@ function findInScope(id) {
     }
 }
 
+/**
+ * Draws the connection between the premise with the specified ID and
+ * all elements to which it is connected.
+ * @param id int The ID of the premise whose connections you wish to draw
+ */
 function connectPremise(id){
+    /**
+     * Private: Convert a string in the format '123px' (as is used by Angular.JS)
+     * into an integer like 123
+     * @param inPx string A value with the label 'px' (like "1234px")
+     * @returns int The measure as an integer (like 1234)
+     */
     function pxToInt(inPx) {
         if(inPx.length > 0) {
             return parseInt(inPx.replace('px',''));
         }
-        return inPx; // Wasn't really a string!!
+        return inPx; // Was an int already!
     }
 
+    /**
+     * Private: draws a Bezier curve between the starting and
+     * ending coordinates on the canvas
+     * @param startCoords A 2-element array with the x and y parameters of the line's starting position, like [100, 200]
+     * @param stopCoords A 2-element array with the x and y parameters of the line's ending position, like [100, 200]
+     */
     function drawPath(startCoords, stopCoords) {
         // For now, we'll just make these straight lines
         var ctrlPt1 = startCoords;
@@ -88,6 +113,9 @@ function connectPremise(id){
     }
 }
 
+/**
+ * Re-draws the connections between all premises
+ */
 function connectPremises() {
     canvas.clear();
 
@@ -96,17 +124,29 @@ function connectPremises() {
     });
 }
 
-function doAllDrawings() {
+/**
+ * Performs all drawing actions. Must be called each time you update anything on the canvas element.
+ */
+function redrawCanvas() {
     connectPremises();
 }
 
+/**
+ * Called whenever the browser window is resized.
+ *
+ * Because the size of the canvas element is relative to the size of the window, and the canvas requires
+ * dimensions in pixels (not percentages!), we have to redraw.
+ */
 function resizeCanvas() {
     canvas.width = $("#theCanvas").outerWidth();
     canvas.height = $("#theCanvas").outerHeight();
 
-    doAllDrawings();
+    redrawCanvas();
 }
 
+/**
+ * Handles the setup of the user interface components
+ */
 function main() {
     scope = $('#theCanvas').scope();
 
