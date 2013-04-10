@@ -236,6 +236,7 @@
             <p style="top:60px">Total number of premises: {{premises.length}}</p>
             <!-- Note: premise element defined by a Directive in canvasController.js -->
             <premise ng-repeat="premise in premises" model="premise">
+				<button class="close" onclick= "scope.premises.remove({{premise.id}});">×</button>
                 <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1">{{premise.title}}</textarea>
                 <p>Contents: {{premise.content}}</p>
                 <p>top: {{premise.top}}; left: {{premise.left}}</p>
