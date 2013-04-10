@@ -57,6 +57,7 @@ function connectPremise(id){
         return inPx; // Was an int already!
     }
 
+    
     /**
      * Private: draws a Bezier curve between the starting and
      * ending coordinates on the canvas
@@ -82,32 +83,35 @@ function connectPremise(id){
         context.closePath();
     }
 
+
+    /**
+     * Gets the relevant coordinates for the premise in question
+     * @param premiseModel The Angular.JS representation of the model for this premise
+     * @returns {{top: Array, bottom: Array, left: Array, right: Array}}
+     *          An object with the premise's top, bottom, left and right in the view (HTML)
+     */
+    function getCoords(premiseModel) {
+        var premiseView = $('#' + premiseModel.id);
+        var w = premiseView.innerWidth();
+        var h = premiseView.innerHeight();
+        var offset = 5;
+
+        return {
+            "top": [pxToInt(premiseModel.left) + w / 2, pxToInt(premiseModel.top) + offset],
+            "bottom": [pxToInt(premiseModel.left) + w / 2, pxToInt(premiseModel.top) + h - offset],
+            "left": [pxToInt(premiseModel.left), pxToInt(premiseModel.top) + h / 2],
+            "right": [pxToInt(premiseModel.left) + w, pxToInt(premiseModel.top) + h / 2]
+        };
+    }
+
+
     var premiseModel = findInScope(id);
     if( premiseModel.connectsTo > 0 ) {
-        var premiseEl = $('#' + premiseModel.id);
-        var w = premiseEl.innerWidth(); // in px
-        var h = premiseEl.innerHeight();
 
-        var offset = 5;
-        premiseModel.coords = {
-            "top": [pxToInt(premiseModel.left) + w/2, pxToInt(premiseModel.top) + offset],
-            "bottom": [pxToInt(premiseModel.left) + w/2, pxToInt(premiseModel.top) + h - offset],
-            "left": [pxToInt(premiseModel.left), pxToInt(premiseModel.top) + h/2],
-            "right": [pxToInt(premiseModel.left) + w, pxToInt(premiseModel.top) + h/2]
-        }
-        console.log("Premise bottom center: " + premiseModel.coords.bottom.toString() );
+        premiseModel.coords = getCoords(premiseModel);
 
         var otherModel = findInScope(premiseModel.connectsTo);
-        var otherEl = $('#' + premiseModel.connectsTo);
-        var otherPos = otherEl.position();
-        var otherW = otherEl.outerWidth(); // in px
-        var otherH = otherEl.outerHeight();
-        otherModel.coords = {
-            "top": [otherPos.left + otherW/2, otherPos.top + offset],
-            "bottom": [otherPos.left + otherW/2, otherPos.top + otherH - offset],
-            "left": [otherPos.left, otherPos.top + otherH/2],
-            "right": [otherPos.left + otherW, otherPos.top + otherH/2]
-        }
+        otherModel.coords = getCoords(otherModel);
 
         drawPath(premiseModel.coords[premiseModel.connectorLoc], otherModel.coords[otherModel.connectorLoc] )
     }
