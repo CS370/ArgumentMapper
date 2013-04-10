@@ -9,6 +9,17 @@
  */
 
 function CanvasPresenter($scope) {
+    function getNewID() {
+        var maxKnown = -1;
+        for( var i = 0; i < $scope.premises.length; i++ ) {
+            if($scope.premises[i].id > maxKnown) {
+                maxKnown = $scope.premises[i].id;
+            }
+        }
+        maxKnown++;
+        return maxKnown;
+    }
+
     $scope.premises = [
         {"id": 1234,
             "title": "Everyone knows Roswell was a coverup",
@@ -25,6 +36,17 @@ function CanvasPresenter($scope) {
             "connectorLoc": 'left',
             "connectsTo": 1234}
     ];
+    $scope.premises.add = function(){
+        this.push({
+            "id": getNewID(),
+            "title": "",
+            "content": "You just added this premise!",
+            "top": 300,
+            "left": 500
+        });
+        $scope.$apply();
+        makeTextareaAutoResize();
+    };
     $scope.title = "Was the moon landing faked?";
 }
 
@@ -52,13 +74,12 @@ app.directive('premise',function() {
                 },
                 drag: function () {           // Called when a drag is in progress
                     console.log("Drag in progress");
-                    var id = $(this).attr('id');
 
                     scope.$apply(function read() {
                         scope.model.top = element.css('top');
                         scope.model.left = element.css('left');
                     });
-                    connectPremise(id);
+                    connectPremises();
                 },
                 stop: function () {           // A dummy method called when a drag ends
                     console.log("Drag ended");

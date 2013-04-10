@@ -37,17 +37,16 @@ function connectPremise(id){
         }
         return inPx; // Wasn't really a string!!
     }
+
     function drawPath(startCoords, stopCoords) {
         // For now, we'll just make these straight lines
         var ctrlPt1 = startCoords;
         var ctrlPt2 = stopCoords;
 
-        canvas.clear();
-
         context.beginPath();
         context.moveTo(startCoords[0], startCoords[1]); // start point
-        context.bezierCurveTo(startCoords[0], startCoords[1],
-                              stopCoords[0], stopCoords[1],
+        context.bezierCurveTo(ctrlPt1[0], ctrlPt1[1],
+                              ctrlPt2[0], ctrlPt2[1],
                               stopCoords[0], stopCoords[1]);
 
         context.lineWidth = 2; //px
@@ -60,39 +59,38 @@ function connectPremise(id){
 
     var premiseModel = findInScope(id);
     if( premiseModel.connectsTo > 0 ) {
-        console.log("Connecting premise...");
-        console.log("Premise top: " + premiseModel.top.toString() + "\tPremise left:" + premiseModel.left.toString() );
-
         var premiseEl = $('#' + premiseModel.id);
         var w = premiseEl.innerWidth(); // in px
         var h = premiseEl.innerHeight();
 
+        var offset = 5;
         premiseModel.coords = {
-            "topCenter": [pxToInt(premiseModel.left) + w/2, pxToInt(premiseModel.top)],
-            "bottomCenter": [pxToInt(premiseModel.left) + w/2, pxToInt(premiseModel.top) + h],
-            "leftCenter": [pxToInt(premiseModel.left), pxToInt(premiseModel.top) + h/2],
-            "rightCenter": [pxToInt(premiseModel.left) + w, pxToInt(premiseModel.top) + h/2]
+            "top": [pxToInt(premiseModel.left) + w/2, pxToInt(premiseModel.top) + offset],
+            "bottom": [pxToInt(premiseModel.left) + w/2, pxToInt(premiseModel.top) + h - offset],
+            "left": [pxToInt(premiseModel.left), pxToInt(premiseModel.top) + h/2],
+            "right": [pxToInt(premiseModel.left) + w, pxToInt(premiseModel.top) + h/2]
         }
-        console.log("Premise bottom center: " + premiseModel.coords.bottomCenter.toString() );
+        console.log("Premise bottom center: " + premiseModel.coords.bottom.toString() );
 
+        var otherModel = findInScope(premiseModel.connectsTo);
         var otherEl = $('#' + premiseModel.connectsTo);
         var otherPos = otherEl.position();
         var otherW = otherEl.outerWidth(); // in px
         var otherH = otherEl.outerHeight();
-        var otherCoords = {
-            "topCenter": [otherPos.left + otherW/2, otherPos.top],
-            "bottomCenter": [otherPos.left + otherW/2, otherPos.top + otherH],
-            "leftCenter": [otherPos.left, otherPos.top + otherH/2],
-            "rightCenter": [otherPos.left + otherW, otherPos.top + otherH/2]
+        otherModel.coords = {
+            "top": [otherPos.left + otherW/2, otherPos.top + offset],
+            "bottom": [otherPos.left + otherW/2, otherPos.top + otherH - offset],
+            "left": [otherPos.left, otherPos.top + otherH/2],
+            "right": [otherPos.left + otherW, otherPos.top + otherH/2]
         }
 
-        if( premiseModel.connectorLoc == "bottom" ) {
-            drawPath(premiseModel.coords.bottomCenter, otherCoords.topCenter);
-        }
+        drawPath(premiseModel.coords[premiseModel.connectorLoc], otherModel.coords[otherModel.connectorLoc] )
     }
 }
 
 function connectPremises() {
+    canvas.clear();
+
     scope.premises.forEach(function(premise){
         connectPremise(premise.id);
     });
@@ -132,6 +130,8 @@ function main() {
     // resize the canvas to fill browser window dynamically
     $(window).resize(resizeCanvas);
     resizeCanvas();
+
+    scope.premises.add();
 }
 
 $(document).ready(main); // When the document is loaded, run the "main" function
