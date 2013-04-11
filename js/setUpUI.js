@@ -173,7 +173,7 @@ function makeNewPremiseDraggable() {
 function makeCanvasDroppable() {
     $("#theCanvas").droppable({      // Mark everything with id "theCanvas" as droppable
         accept: ".premise-demo",     // Accept items of class ".premise-demo"
-        tolerance: "fit",            // Stylizing - probably not necessary
+        tolerance: "intersect",            // Stylizing - probably not necessary
         drop: function(event, ui) {  // Function that adds on new premise when a valid item is dropped here
             scope.premises.add();
         }
