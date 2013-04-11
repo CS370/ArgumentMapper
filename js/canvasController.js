@@ -56,14 +56,15 @@ function CanvasPresenter($scope) {
         $scope.$apply();
         makeTextareaAutoResize();
     };
-	$scope.premises.remove = function(premise){
+	$scope.premises.remove = function(premiseID){
+        // Note: "this" is the list of premises
 		for(var i = 0; i<this.length;i++){
-			if(premise == this[i].id){
+			if(premiseID == this[i].id){
 				this.splice(i,1);
 			}
 		}
         $scope.$apply();
-        makeTextareaAutoResize();
+        //makeTextareaAutoResize();
     };
     $scope.title = "Was the moon landing faked?";
 }
