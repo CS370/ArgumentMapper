@@ -155,7 +155,7 @@ function resizeCanvas() {
  * Gives the options for dragging over a new premise box
  */
 function makeNewPremiseDraggable() {
-    $(".premise-demo").draggable({      // Mark everything with class "premise-demo" as draggable
+    $(".premise-demo, .rebuttal-demo").draggable({      // Mark everything with class "premise-demo" as draggable
         scroll: false,               // Don't scroll the element we're contained in
         grid: [ 5, 5 ],               // Snap to a 5px square grid
         stack: "#theCanvas div",    // Allow divs to be stacked within the canvas
@@ -169,13 +169,25 @@ function makeNewPremiseDraggable() {
  * Gives the options for the droppable canvas
  */
 function makeCanvasDroppable() {
-    $("#theCanvas").droppable({      // Mark everything with id "theCanvas" as draggable
-        accept: ".premise-demo",        // Accept items of class ".premise-demo"
+    $("#theCanvas").droppable({      // Mark everything with id "theCanvas" as droppable
+        accept: ".premise-demo",     // Accept items of class ".premise-demo"
         tolerance: "fit",            // Stylizing - probably not necessary
-        drop: function(event, ui) {     // Function that adds on new premise when a valid item is dropped here
+        drop: function(event, ui) {  // Function that adds on new premise when a valid item is dropped here
             scope.premises.add();
         }
+    });
+    $("#theCanvas").droppable({      // Accept rebuttal-demo as well
+        accept: ".rebuttal-demo",
+        tolerance: "fit",
+        drop: function(event, ui) {
+            scope.premises.add(true);
+        }
+    });
+}
 
+function bindCloseButtonEventHandler() {
+    $('.premise .close').click(function(){
+        scope.premises.remove($(this).parent().parent().attr('id'));
     });
 }
 
@@ -185,6 +197,7 @@ function makeCanvasDroppable() {
 function main() {
     scope = $('#theCanvas').scope();
 
+    // Set up the <canvas> element for drawing
     canvas = $("#drawing")[0];
     context = canvas.getContext('2d');
     canvas.clear = function() {
@@ -198,15 +211,15 @@ function main() {
         // Restore the transform
         context.restore();
     }
-
-    makeTextareaAutoResize();
-
-
     // resize the canvas to fill browser window dynamically
     $(window).resize(resizeCanvas);
     resizeCanvas();
 
-    scope.premises.add();
+
+    bindCloseButtonEventHandler();
+
+    makeTextareaAutoResize();
+
     makeNewPremiseDraggable();
     makeCanvasDroppable();
 }

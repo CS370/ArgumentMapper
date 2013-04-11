@@ -31,7 +31,8 @@ function CanvasPresenter($scope) {
             "top": 100,
             "left": 15,
             "connectsTo": { 8675309: 'bottom', },
-            "connectedFrom": {}
+            "connectedFrom": {},
+            'additionalClasses': ''
         },
         {"id": 8675309,
             "title": "The shadows are borked.",
@@ -39,15 +40,19 @@ function CanvasPresenter($scope) {
             "top": 330,
             "left": 200,
             "connectsTo": {},
-            "connectedFrom": {1234: 'left',}
+            "connectedFrom": {1234: 'left',},
+            'additionalClasses': ''
         }
     ];
 
     /**
      * Creates a new premise in the scope's list of premises.
+     * @param isRebuttal boolean (Optional) If true, we'll mark this as a rebuttal
      * @usage $scope.premises.add();
      */
-    $scope.premises.add = function(){
+    $scope.premises.add = function(isRebuttal){
+        if(typeof(isRebuttal)==='undefined') isRebuttal = false;
+
         this.push({
             "id": getNewID(),
             "title": "",
@@ -55,10 +60,12 @@ function CanvasPresenter($scope) {
             "top": 300,
             "left": 500,
             "connectedFrom": {},
-            "connectsTo": {}
+            "connectsTo": {},
+            'additionalClasses': ( isRebuttal ? ' rebuttal' : '' )
         });
         $scope.$apply();
         makeTextareaAutoResize();
+        bindCloseButtonEventHandler();
     };
 	$scope.premises.remove = function(premiseID){
         // Note: "this" is the list of premises
@@ -83,7 +90,7 @@ var app = angular.module('ArgumentMapper', []);
  */
 app.directive('premise',function() {
     return {
-        template: '<div class="premise" id="{{model.id}}" ng-style="{ top: model.top, left: model.left}"><div ng-transclude></div></premise>',
+        template: '<div class="premise {{model.additionalClasses}}" id="{{model.id}}" ng-style="{ top: model.top, left: model.left}"><div ng-transclude></div></premise>',
         restrict: 'E',
         transclude: true,
         replace: true,
