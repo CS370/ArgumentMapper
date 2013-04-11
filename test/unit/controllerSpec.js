@@ -26,10 +26,16 @@ describe('Canvas presenter', function() {
     it('should have legal positions', function() {
         var scope = {},
             ctrl = new CanvasPresenter(scope);
-
         scope.premises.forEach( function(premise){
             expect(premise.top).toBeGreaterThan(0);
             expect(premise.left).toBeGreaterThan(0);
         });
     });
+	it('should delete premises', function(){
+		var scope = {},
+			ctrl = new CanvasPresenter(scope);
+		var length = scope.premises.length;
+		scope.premises.remove(1234);
+		expect(premises.length).toBeLessThan(length);
+	});
 });
