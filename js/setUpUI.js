@@ -148,22 +148,28 @@ function resizeCanvas() {
     redrawCanvas();
 }
 
+/**
+ * Gives the options for dragging over a new premise box
+ */
 function makeNewPremiseDraggable() {
     $(".premise-demo").draggable({      // Mark everything with class "premise-demo" as draggable
         scroll: false,               // Don't scroll the element we're contained in
         grid: [ 5, 5 ],               // Snap to a 5px square grid
         stack: "#theCanvas div",    // Allow divs to be stacked within the canvas
         distance: 20,                 // Only move the div if it is dragged more than 20px (prevent accidents)
-        helper: "clone",
-        revert: "invalid"
+        helper: "clone",            // Makes a "clone" of the dragged object, instead of "moving" it
+        revert: "invalid"             // Animates the invalid placement of new premise back to original place
     });
 }
 
+/**
+ * Gives the options for the droppable canvas
+ */
 function makeCanvasDroppable() {
     $("#theCanvas").droppable({      // Mark everything with id "theCanvas" as draggable
-        accept: ".premise-demo",
-        tolerance: "fit",
-        drop: function(event, ui) {
+        accept: ".premise-demo",        // Accept items of class ".premise-demo"
+        tolerance: "fit",            // Stylizing - probably not necessary
+        drop: function(event, ui) {     // Function that adds on new premise when a valid item is dropped here
             scope.premises.add();
         }
 
