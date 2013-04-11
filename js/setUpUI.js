@@ -15,6 +15,7 @@ var context;
  * resize (vertically)
  */
 function makeTextareaAutoResize() {
+    // TODO: Don't add a new autoresize handler if there is already an existing one
     $('textarea.premise-title').autoResize({ 'extraSpace': 0 });
     $("textarea.premise-title").trigger('change.dynSiz');
 }
@@ -105,6 +106,7 @@ function connectPremise(id){
         };
     }
 
+    // TODO: Don't try to draw if the premises don't exist
     var premiseModel = findInScope(id);
     premiseModel.coords = getCoords(premiseModel);
     for( var connectsToID in premiseModel.connectsTo ) {
