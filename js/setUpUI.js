@@ -148,6 +148,28 @@ function resizeCanvas() {
     redrawCanvas();
 }
 
+function makeNewPremiseDraggable() {
+    $(".premise-demo").draggable({      // Mark everything with class "premise-demo" as draggable
+        scroll: false,               // Don't scroll the element we're contained in
+        grid: [ 5, 5 ],               // Snap to a 5px square grid
+        stack: "#theCanvas div",    // Allow divs to be stacked within the canvas
+        distance: 20,                 // Only move the div if it is dragged more than 20px (prevent accidents)
+        helper: "clone",
+        revert: "invalid"
+    });
+}
+
+function makeCanvasDroppable() {
+    $("#theCanvas").droppable({      // Mark everything with id "theCanvas" as draggable
+        accept: ".premise-demo",
+        tolerance: "fit",
+        drop: function(event, ui) {
+            scope.premises.add();
+        }
+
+    });
+}
+
 /**
  * Handles the setup of the user interface components
  */
@@ -176,6 +198,8 @@ function main() {
     resizeCanvas();
 
     scope.premises.add();
+    makeNewPremiseDraggable();
+    makeCanvasDroppable();
 }
 
 $(document).ready(main); // When the document is loaded, run the "main" function
