@@ -75,7 +75,7 @@ function CanvasPresenter($scope) {
 			}
 		}
         $scope.$apply();
-        //makeTextareaAutoResize();
+        makeTextareaAutoResize();
     };
     $scope.title = "Was the moon landing faked?";
 }
