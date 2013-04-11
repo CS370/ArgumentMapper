@@ -30,15 +30,17 @@ function CanvasPresenter($scope) {
             "content": "Lorem ipsum.",
             "top": 100,
             "left": 15,
-            "connectorLoc": 'bottom',
-            "connectsTo": 8675309},
+            "connectsTo": { 8675309: 'bottom', },
+            "connectedFrom": {}
+        },
         {"id": 8675309,
             "title": "The shadows are borked.",
             "content": "This description may be useless.",
             "top": 330,
             "left": 200,
-            "connectorLoc": 'left',
-            "connectsTo": 1234}
+            "connectsTo": {},
+            "connectedFrom": {1234: 'left',}
+        }
     ];
 
     /**
@@ -51,7 +53,9 @@ function CanvasPresenter($scope) {
             "title": "",
             "content": "You just added this premise!",
             "top": 300,
-            "left": 500
+            "left": 500,
+            "connectedFrom": {},
+            "connectsTo": {}
         });
         $scope.$apply();
         makeTextareaAutoResize();

@@ -57,17 +57,18 @@ function connectPremise(id){
         return inPx; // Was an int already!
     }
 
-    
+
     /**
      * Private: draws a Bezier curve between the starting and
      * ending coordinates on the canvas
      * @param startCoords A 2-element array with the x and y parameters of the line's starting position, like [100, 200]
      * @param stopCoords A 2-element array with the x and y parameters of the line's ending position, like [100, 200]
+     * @param startConnectorLoc string The location of the connection on the starting element (top, bottom, left, or right)
+     * @param stopConnectorLoc string The location of the connection on the ending element (top, bottom, left, or right)
      */
-    function drawPath(startCoords, stopCoords) {
-        // For now, we'll just make these straight lines
-        var ctrlPt1 = startCoords;
-        var ctrlPt2 = stopCoords;
+    function drawPath(startCoords, stopCoords, startConnectorLoc, stopConnectorLoc) {
+        var ctrlPt1 = [startCoords[0], (startCoords[1] + stopCoords[1])/2];
+        var ctrlPt2 = ctrlPt1;
 
         context.beginPath();
         context.moveTo(startCoords[0], startCoords[1]); // start point
@@ -104,17 +105,19 @@ function connectPremise(id){
         };
     }
 
-
     var premiseModel = findInScope(id);
-    if( premiseModel.connectsTo > 0 ) {
-
-        premiseModel.coords = getCoords(premiseModel);
-
-        var otherModel = findInScope(premiseModel.connectsTo);
+    premiseModel.coords = getCoords(premiseModel);
+    for( var connectsToID in premiseModel.connectsTo ) {
+        var otherModel = findInScope(connectsToID);
         otherModel.coords = getCoords(otherModel);
 
-        drawPath(premiseModel.coords[premiseModel.connectorLoc], otherModel.coords[otherModel.connectorLoc] )
+        drawPath(premiseModel.coords[premiseModel.connectsTo[connectsToID]],
+                 otherModel.coords[otherModel.connectedFrom[id]],
+                 premiseModel.connectedFrom[id],
+                 otherModel.connectedFrom[id]);
     }
+
+
 }
 
 /**
