@@ -171,18 +171,17 @@ function makeNewPremiseDraggable() {
  * Gives the options for the droppable canvas
  */
 function makeCanvasDroppable() {
-    $("#theCanvas").droppable({      // Mark everything with id "theCanvas" as droppable
-        accept: ".premise-demo",     // Accept items of class ".premise-demo"
-        tolerance: "intersect",            // Stylizing - probably not necessary
-        drop: function(event, ui) {  // Function that adds on new premise when a valid item is dropped here
-            scope.premises.add();
-        }
-    });
     $("#theCanvas").droppable({      // Accept rebuttal-demo as well
-        accept: ".rebuttal-demo",
-        tolerance: "fit",
+        accept: ".rebuttal-demo, .premise-demo",
+        tolerance: "intersect",
         drop: function(event, ui) {
-            scope.premises.add(true);
+            console.log(ui.draggable.attr("class"));
+            if(ui.draggable.attr("class") == "rebuttal-demo ui-draggable") {
+                scope.premises.add(true);
+            }
+            else {
+                scope.premises.add();
+            }
         }
     });
 }
