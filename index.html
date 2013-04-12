@@ -25,6 +25,9 @@
     <!-- include the Angular.js presentation framework -->
     <script src="lib/angular.min.js"></script>
 
+    <!-- The Presenter's interface to the model -->
+    <script src="js/ArgumentData.js"></script>
+
     <!-- Our controller (presenter) for handling the premises -->
     <script type="text/javascript" src="js/canvasController.js"></script>
 
@@ -216,8 +219,8 @@
         <aside id="sidebar" class="span2">
             <ul class="nav nav-list">
                 <li class="nav-header">Add an element</li>
-                <li><a href="#"><span class="premise-demo" onclick="scope.premises.add();">Add a premise box</span></a></li>
-                <li><a href="#"><span class="rebuttal-demo">Add a rebuttal box</span></a></li>
+                <li><a href="#" id="addNewPremise"><span class="premise-demo">Add a premise box</span></a></li>
+                <li><a href="#" id="addNewRebuttal"><span class="rebuttal-demo">Add a rebuttal box</span></a></li>
                 <li><a href="#">Add a connector</a></li>
                 <li class="nav-header">Do something else</li>
                 <li><a href="#">Make a sandwich</a></li>
@@ -237,7 +240,6 @@
         <div ng-controller="CanvasPresenter" id="theCanvas" class="span10">
             <canvas id="drawing" width="578" height="200"></canvas>
             <input value="{{title}}" id="argumentTitle"/>
-            <p style="top:60px">Total number of premises: {{premises.length}}</p>
             <!-- Note: premise element defined by a Directive in canvasController.js -->
             <premise ng-repeat="premise in premises" model="premise">
 				<button class="close">&times;</button>

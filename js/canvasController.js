@@ -7,77 +7,23 @@
  *
  * Created by Tyler Young on 4 April 2013.
  */
-
 function CanvasPresenter($scope) {
-    /**
-     * Returns a new ID which is not in conflict with any existing IDs in this document.
-     * @returns int A non-conflicting ID
-     */
-    function getNewID() {
-        var maxKnown = -1;
-        for( var i = 0; i < $scope.premises.length; i++ ) {
-            if($scope.premises[i].id > maxKnown) {
-                maxKnown = $scope.premises[i].id;
-            }
-        }
-        maxKnown++;
-        return maxKnown;
-    }
+    $scope.argumentData = new ArgumentData();
+    $scope.title = $scope.argumentData.getTitle();
+    $scope.premises = $scope.argumentData.getPremiseList();
 
-    $scope.premises = [
-        {"id": 1234,
-            "title": "Everyone knows Roswell was a coverup",
-            "content": "Lorem ipsum.",
-            "top": 100,
-            "left": 15,
-            "connectsTo": { 8675309: 'bottom', },
-            "connectedFrom": {},
-            'additionalClasses': ''
-        },
-        {"id": 8675309,
-            "title": "The shadows are borked.",
-            "content": "This description may be useless.",
-            "top": 330,
-            "left": 200,
-            "connectsTo": {},
-            "connectedFrom": {1234: 'left',},
-            'additionalClasses': ''
-        }
-    ];
 
-    /**
-     * Creates a new premise in the scope's list of premises.
-     * @param isRebuttal boolean (Optional) If true, we'll mark this as a rebuttal
-     * @usage $scope.premises.add();
-     */
-    $scope.premises.add = function(isRebuttal){
-        if(typeof(isRebuttal)==='undefined') isRebuttal = false;
-
-        this.push({
-            "id": getNewID(),
-            "title": "",
-            "content": "You just added this premise!",
-            "top": 300,
-            "left": 500,
-            "connectedFrom": {},
-            "connectsTo": {},
-            'additionalClasses': ( isRebuttal ? ' rebuttal' : '' )
-        });
+    // Override the default add() functionality to include a call to the view-updating methods
+    $scope.argumentData.addPremise = function (isRebuttal) {
+        ArgumentData.prototype.addPremise.call(this, isRebuttal);
         $scope.$apply();
         makeTextareaAutoResize();
         bindCloseButtonEventHandler();
     };
-	$scope.premises.remove = function(premiseID){
-        // Note: "this" is the list of premises
-		for(var i = 0; i<this.length;i++){
-			if(premiseID == this[i].id){
-				this.splice(i,1);
-			}
-		}
+    $scope.argumentData.removePremise = function(id) {
+        ArgumentData.prototype.removePremise.call(this, id);
         $scope.$apply();
-        makeTextareaAutoResize();
-    };
-    $scope.title = "Was the moon landing faked?";
+    }
 }
 
 
@@ -123,4 +69,3 @@ app.directive('premise',function() {
         }
     };
 });
-

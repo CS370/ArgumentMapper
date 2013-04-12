@@ -33,10 +33,8 @@ function makeTextareaAutoResize() {
  * @returns A premise object
  */
 function findInScope(id) {
-    for( var i = 0; i < scope.premises.length; i++) {
-        if( scope.premises[i].id == id ) {
-            return scope.premises[i];
-        }
+    if( id in scope.premises ) {
+        return scope.premises[id];
     }
     console.log("Couldn't find premise with ID " + id.toString());
     console.log("Attributes: ");
@@ -134,7 +132,9 @@ function connectPremise(id){
 function connectPremises() {
     canvas.clear();
 
-    scope.premises.forEach(function(premise){
+    scope.argumentData.forEachPremise(function(premise){
+        console.log("Premise is " + premise.toString());
+
         connectPremise(premise.id);
     });
 }
@@ -183,10 +183,10 @@ function makeCanvasDroppable() {
         drop: function(event, ui) {
             console.log(ui.draggable.attr("class"));
             if(ui.draggable.attr("class") == "rebuttal-demo ui-draggable") {
-                scope.premises.add(true);
+                scope.argumentData.addPremise(true);
             }
             else {
-                scope.premises.add();
+                scope.argumentData.addPremise();
             }
         }
     });
@@ -194,10 +194,20 @@ function makeCanvasDroppable() {
 
 function bindCloseButtonEventHandler() {
     $('.premise .close').click(function(){
-        scope.premises.remove($(this).parent().parent().attr('id'));
+        console.log($(this).parent().parent());
+        console.log("Deleting premise with ID " + $(this).parent().parent().attr('id'));
+        scope.argumentData.removePremise($(this).parent().parent().attr('id'));
     });
 }
 
+function bindToolbarEventHandlers() {
+    $("#addNewPremise").click(function() {
+        scope.argumentData.addPremise();
+    });
+    $("#addNewRebuttal").click(function() {
+        scope.argumentData.addPremise(true);
+    });
+}
 /**
  * Handles the setup of the user interface components
  */
@@ -207,7 +217,7 @@ function main() {
     // Set up the <canvas> element for drawing
     canvas = $("#drawing")[0];
     context = canvas.getContext('2d');
-    canvas.clear = function() {
+    canvas.clear = function () {
         // Store the current transformation matrix
         context.save();
 
@@ -217,12 +227,13 @@ function main() {
 
         // Restore the transform
         context.restore();
-    }
+    };
     // resize the canvas to fill browser window dynamically
     $(window).resize(resizeCanvas);
     resizeCanvas();
 
 
+    bindToolbarEventHandlers();
     bindCloseButtonEventHandler();
 
     makeTextareaAutoResize();
