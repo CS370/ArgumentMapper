@@ -67,6 +67,5 @@ describe('Canvas presenter', function() {
         var oldSize = $scope.premises.length;
         $scope.premises.add();
         expect($scope.premises.length).toBeGreaterThan(oldSize);
-
     });
 });

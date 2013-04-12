@@ -15,9 +15,15 @@ var context;
  * resize (vertically)
  */
 function makeTextareaAutoResize() {
-    // TODO: Don't add a new autoresize handler if there is already an existing one
-    $('textarea.premise-title').autoResize({ 'extraSpace': 0 });
-    $("textarea.premise-title").trigger('change.dynSiz');
+    var textAreas = $('textarea.premise-title');
+
+    textAreas.each( function() { // For each premise title text area
+        if( $(this).attr('autoresizing') !== 'true' ) {
+            $(this).attr('autoresizing', 'true'); // Set a flag so we don't re-bind the autoresizer to this element
+            $(this).autoResize({ 'extraSpace': 0 });
+            $(this).trigger('change.dynSiz');
+        }
+    });
 }
 
 /**
