@@ -21,7 +21,7 @@ describe('Canvas presenter', function() {
         };
         var ctrl = $controller('CanvasPresenter', params);
 
-        expect($scope.premises.length).toBeGreaterThan(0);
+        expect(Object.keys($scope.premises).length).toBeGreaterThan(0);
     });
 
     it('should have a title', function() {
@@ -39,9 +39,9 @@ describe('Canvas presenter', function() {
         };
         var ctrl = $controller('CanvasPresenter', params);
 
-        $scope.premises.add();
+        $scope.argumentData.addPremise();
 
-        $scope.premises.forEach( function(premise){
+        $scope.argumentData.forEachPremise( function(premise){
             expect(premise.top).toBeGreaterThan(0);
             expect(premise.left).toBeGreaterThan(0);
         });
@@ -53,9 +53,9 @@ describe('Canvas presenter', function() {
         };
         var ctrl = $controller('CanvasPresenter', params);
 
-		var length = $scope.premises.length;
-		$scope.premises.remove(1234);
-		expect($scope.premises.length).toBeLessThan(length);
+		var length = Object.keys($scope.premises).length;
+		$scope.argumentData.removePremise(1234);
+		expect(Object.keys($scope.premises).length).toBeLessThan(length);
 	});
 
     it('should allow adding premises', function() {
@@ -64,8 +64,8 @@ describe('Canvas presenter', function() {
         };
         var ctrl = $controller('CanvasPresenter', params);
 
-        var oldSize = $scope.premises.length;
-        $scope.premises.add();
-        expect($scope.premises.length).toBeGreaterThan(oldSize);
+        var oldSize = Object.keys($scope.premises).length;
+        $scope.argumentData.addPremise();
+        expect(Object.keys($scope.premises).length).toBeGreaterThan(oldSize);
     });
 });
