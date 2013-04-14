@@ -164,6 +164,64 @@
             color: #bd362f;
             opacity: 1.0;
         }
+
+        .connector-container {
+            overflow: visible;
+            top: 0;
+            left: 0;
+        }
+
+        .connector {
+            height: 10px;
+            width: 30px;
+            border-radius: 2px;
+            background-color: #5bb75b;
+            background-image: -moz-linear-gradient(top,#62c462,#51a351);
+            background-image: -webkit-gradient(linear,0 0,0 100%,from(#62c462),to(#51a351));
+            background-image: -webkit-linear-gradient(top,#62c462,#51a351);
+            background-image: -o-linear-gradient(top,#62c462,#51a351);
+            background-image: linear-gradient(to bottom,#62c462,#51a351);
+            background-repeat: repeat-x;
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            position: absolute;
+            z-index: 100;
+        }
+        .connector-end {
+
+        }
+        .connector-start {
+            width:50px;
+        }
+        .connector-vertical {
+            width: 10px;
+            height: 30px;
+        }
+        .connector-vertical.connector-start {
+            height: 50px;
+        }
+        .connect-point {
+            width: 0;
+            height: 0;
+            /*visibility: hidden;*/
+            position: absolute;
+            background-color: red;
+        }
+        .connect-point-top {
+            top: 0;
+            right: 50%;
+        }
+        .connect-point-right {
+            right: 0;
+            top: 50%;
+        }
+        .connect-point-bottom {
+            bottom: 0;
+            right: 50%;
+        }
+        .connect-point-left {
+            left: 0;
+            top: 50%;
+        }
     </style>
 </head>
 
@@ -221,7 +279,7 @@
                 <li class="nav-header">Add an element</li>
                 <li><a href="#" id="addNewPremise"><span class="premise-demo">Add a premise box</span></a></li>
                 <li><a href="#" id="addNewRebuttal"><span class="rebuttal-demo">Add a rebuttal box</span></a></li>
-                <li><a href="#">Add a connector</a></li>
+                <li><a href="#" id="addNewConnector">Add a connector</a></li>
                 <li class="nav-header">Do something else</li>
                 <li><a href="#">Make a sandwich</a></li>
                 <li><a href="#">Take a shower</a></li>
@@ -247,6 +305,10 @@
                 <p>Contents: {{premise.content}}</p>
                 <p>top: {{premise.top}}; left: {{premise.left}}</p>
             </premise>
+            <connector ng-repeat="connector in connectors" model="connector">
+                <div id="{{connector.id}}-start" class="connector connector-start"></div>
+                <div id="{{connector.id}}-end" class="connector connector-end"></div>
+            </connector>
         </div>
 
     </div>

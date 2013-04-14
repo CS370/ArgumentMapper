@@ -46,96 +46,197 @@ function findInScope(id) {
 /**
  * Draws the connection between the premise with the specified ID and
  * all elements to which it is connected.
- * @param id int The ID of the premise whose connections you wish to draw
+ *
+ * @TODO: Refactor this to a separate file? It's grown to be a bit of a mess.
+ * @param connector {{start: {string | Array}, end: {string | array}}} The connector to draw
  */
-function connectPremise(id){
+function drawConnection(connector){
     /**
-     * Private: Convert a string in the format '123px' (as is used by Angular.JS)
-     * into an integer like 123
-     * @param inPx string A value with the label 'px' (like "1234px")
-     * @returns int The measure as an integer (like 1234)
+     * Parses the connection ID string to determine which side of the premise this handle is connected to.
+     * @param connectionID string The ID of the invisible element this handle is snapped to.
+     *                            Of the form [premise ID]-{left|right|top|bottom}
      */
-    function pxToInt(inPx) {
-        if(inPx.length > 0) {
-            return parseInt(inPx.replace('px',''));
+    function getSideConnectedTo(connectionID) {
+        if( connectionID.indexOf('top') !== -1 ) {
+            return Sides.TOP;
+        } else if( connectionID.indexOf('right') !== -1 ) {
+            return Sides.RIGHT;
+        } else if( connectionID.indexOf('bottom') !== -1 ) {
+            return Sides.BOTTOM;
+        } else if( connectionID.indexOf('left') !== -1 ) {
+            return Sides.LEFT;
         }
-        return inPx; // Was an int already!
     }
 
+    /**
+     * Parses the connection ID string to determine what orientation the handle should have.
+     * @param connectionID {string|Sides enum} The ID of the invisible element this handle is snapped to.
+     *                                         Of the form [premise ID]-{left|right|top|bottom}
+     */
+    function getOrientation(connectionID) {
+        if( typeof(connectionID) === 'undefined' ) {
+            return Orientations.HORIZONTAL;
+        }
+
+        if( typeof(connectionID) === 'number' ) {
+            if( connectionID === Sides.TOP || connectionID === Sides.BOTTOM ){
+                return Orientations.HORIZONTAL;
+            } else {
+                return Orientations.VERTICAL;
+            }
+        }
+
+        if( connectionID.indexOf('top') !== -1 || connectionID.indexOf('bottom') !== -1 ) {
+            return Orientations.HORIZONTAL;
+        } else {
+            return Orientations.VERTICAL;
+        }
+    }
 
     /**
      * Private: draws a Bezier curve between the starting and
      * ending coordinates on the canvas
-     * @param startCoords A 2-element array with the x and y parameters of the line's starting position, like [100, 200]
-     * @param stopCoords A 2-element array with the x and y parameters of the line's ending position, like [100, 200]
-     * @param startConnectorLoc string The location of the connection on the starting element (top, bottom, left, or right)
-     * @param stopConnectorLoc string The location of the connection on the ending element (top, bottom, left, or right)
+     * @param startCoords {{left: number, top: number}} The x and y parameters of the line's starting position, like {top: 100, left: 200}
+     * @param stopCoords {{left: number, top: number}} The x and y parameters of the line's ending position, like {top: 100, left: 200}
+     * @param startConnectorLoc Sides enum The location of the connection on the starting element (top, bottom, left, or right)
+     * @param stopConnectorLoc Sides enum The location of the connection on the ending element (top, bottom, left, or right)
      */
+    var Orientations = { VERTICAL: 0, HORIZONTAL: 1 };
     function drawPath(startCoords, stopCoords, startConnectorLoc, stopConnectorLoc) {
-        var ctrlPt1 = [startCoords[0], (startCoords[1] + stopCoords[1])/2];
+        var ctrlPt1 = {'left': startCoords.left, 'top': (startCoords.top + stopCoords.top)/2 };
         var ctrlPt2 = ctrlPt1;
 
+        var shiftAmt = 5;
+        if( getOrientation(startConnectorLoc) === Orientations.HORIZONTAL ) {
+            startCoords.left += 2 * shiftAmt - 10;
+        } else {
+            startCoords.top -= 2 * shiftAmt + 20;
+        }
+
         context.beginPath();
-        context.moveTo(startCoords[0], startCoords[1]); // start point
-        context.bezierCurveTo(ctrlPt1[0], ctrlPt1[1],
-                              ctrlPt2[0], ctrlPt2[1],
-                              stopCoords[0], stopCoords[1]);
+        context.moveTo(startCoords.left, startCoords.top); // start point
+        context.bezierCurveTo(ctrlPt1.left, ctrlPt1.top,
+                              ctrlPt2.left, ctrlPt2.top,
+                              stopCoords.left, stopCoords.top);
+
+        // Draw connecting line
+        if( getOrientation(stopConnectorLoc) === Orientations.HORIZONTAL ) {
+            startCoords.left += shiftAmt / 2;
+            context.lineTo(stopCoords.left, stopCoords.top);
+        } else {
+            startCoords.top += shiftAmt / 2;
+            context.lineTo(stopCoords.left, stopCoords.top);
+        }
+
+        // Move the control point
+        if( getOrientation(startConnectorLoc) === Orientations.HORIZONTAL ) {
+            ctrlPt1.left -= shiftAmt;
+            ctrlPt1.left -= shiftAmt;
+            startCoords.left -= 4 * shiftAmt;
+        } else {
+            ctrlPt1.top += shiftAmt;
+            ctrlPt2.top += shiftAmt;
+            startCoords.top += 4 * shiftAmt;
+        }
+        if( startConnectorLoc == Sides.BOTTOM ) {
+            ctrlPt1.top += shiftAmt;
+            ctrlPt2.top += shiftAmt;
+        } else if( startConnectorLoc == Sides.TOP ) {
+            ctrlPt1.top -= shiftAmt;
+            ctrlPt2.top -= shiftAmt;
+        } else if( startConnectorLoc == Sides.RIGHT ) {
+            ctrlPt1.left += shiftAmt;
+            ctrlPt2.left += shiftAmt;
+        } else { // Left
+            ctrlPt1.left -= shiftAmt;
+            ctrlPt2.left -= shiftAmt;
+        }
+
+        context.bezierCurveTo(ctrlPt1.left, ctrlPt1.top,
+                              ctrlPt2.left, ctrlPt2.top,
+                              startCoords.left, startCoords.top);
 
         context.lineWidth = 2; //px
 
         // line color
         context.strokeStyle = '#333';
         context.stroke();
+
+        context.fillStyle = '#51a351';
+        context.fill();
+
         context.closePath();
     }
 
-
     /**
-     * Gets the relevant coordinates for the premise in question
-     * @param premiseModel The Angular.JS representation of the model for this premise
-     * @returns {{top: Array, bottom: Array, left: Array, right: Array}}
-     *          An object with the premise's top, bottom, left and right in the view (HTML)
+     * Creates the connector handle with the specified ID
+     * @param handleID string The ID (without a hash) of the handle to create. Should contain "start" or "end".
      */
-    function getCoords(premiseModel) {
-        var premiseView = $('#' + premiseModel.id);
-        var w = premiseView.innerWidth();
-        var h = premiseView.innerHeight();
-        var offset = 5;
+    function updateHandlePosition(handleID) {
+        var ConnectorType = { Start: "start", Stop: "end" };
+        var type;
+        if( handleID.indexOf('start') !== -1 ) {
+            type = ConnectorType.Start;
+        } else {
+            type = ConnectorType.Stop;
+        }
 
-        return {
-            "top": [pxToInt(premiseModel.left) + w / 2, pxToInt(premiseModel.top) + offset],
-            "bottom": [pxToInt(premiseModel.left) + w / 2, pxToInt(premiseModel.top) + h - offset],
-            "left": [pxToInt(premiseModel.left), pxToInt(premiseModel.top) + h / 2],
-            "right": [pxToInt(premiseModel.left) + w, pxToInt(premiseModel.top) + h / 2]
-        };
+        var handleElement = $('#' + handleID);
+
+        var left, top;
+        if( typeof(connector[type]) !== "object" ) { // We know exactly which element it connects to
+            var elementToConnectTo = $("#" + connector[type]);
+            left = elementToConnectTo.position().left + elementToConnectTo.outerWidth() / 2 + elementToConnectTo.offsetParent().position().left;
+            top = elementToConnectTo.position().top + elementToConnectTo.outerHeight() / 2 + elementToConnectTo.offsetParent().position().top;
+
+            if( getOrientation(connector[type]) === Orientations.VERTICAL ) {
+                handleElement.addClass( "connector-vertical", 500 );
+            } else {
+                handleElement.removeClass( "connector-vertical", 500 );
+            }
+        } else {
+            left = connector[type][0];
+            top = connector[type][1];
+            handleElement.removeClass( "connector-vertical", 500 );
+        }
+        handleElement.css({
+            'left': left,
+            'top': top
+        });
     }
 
-    // TODO: Don't try to draw if the premises don't exist
-    var premiseModel = findInScope(id);
-    premiseModel.coords = getCoords(premiseModel);
-    for( var connectsToID in premiseModel.connectsTo ) {
-        var otherModel = findInScope(connectsToID);
-        otherModel.coords = getCoords(otherModel);
+    // Make sure the "handles" exist in the DOM
+    var startHandleID = connector.id + "-start";
+    var endHandleID = connector.id + "-end";
 
-        drawPath(premiseModel.coords[premiseModel.connectsTo[connectsToID]],
-                 otherModel.coords[otherModel.connectedFrom[id]],
-                 premiseModel.connectedFrom[id],
-                 otherModel.connectedFrom[id]);
-    }
+    updateHandlePosition(startHandleID);
+    updateHandlePosition(endHandleID);
 
+    var startHandle = $("#" + startHandleID);
+    var startUpperLeft = startHandle.position();
+    var startCenter = {'top': startUpperLeft.top + startHandle.innerHeight() / 2,
+        'left': startUpperLeft.left + startHandle.innerWidth() / 2 };
+    var endHandle = $("#" + endHandleID);
+    var endUpperLeft = endHandle.position();
+    var endCenter = {'top': endUpperLeft.top + endHandle.innerHeight() / 2,
+        'left': endUpperLeft.left + endHandle.innerWidth() / 2 };
+
+    // Draw the connection between the handles
+    drawPath(startCenter,
+             endCenter,
+             getSideConnectedTo(connector.start),
+             getSideConnectedTo(connector.end));
 
 }
 
 /**
  * Re-draws the connections between all premises
  */
-function connectPremises() {
+function drawConnections() {
     canvas.clear();
 
-    scope.argumentData.forEachPremise(function(premise){
-        console.log("Premise is " + premise.toString());
-
-        connectPremise(premise.id);
+    scope.argumentData.forEachConnector(function(connector){
+        drawConnection(connector);
     });
 }
 
@@ -143,7 +244,7 @@ function connectPremises() {
  * Performs all drawing actions. Must be called each time you update anything on the canvas element.
  */
 function redrawCanvas() {
-    connectPremises();
+    drawConnections();
 }
 
 /**
@@ -155,6 +256,7 @@ function redrawCanvas() {
 function resizeCanvas() {
     canvas.width = $("#theCanvas").outerWidth();
     canvas.height = $("#theCanvas").outerHeight();
+    context.translate(0,-10); // correct for otherwise baffling error in the y direction
 
     redrawCanvas();
 }
@@ -169,7 +271,8 @@ function makeNewPremiseDraggable() {
         stack: "#theCanvas div",    // Allow divs to be stacked within the canvas
         distance: 20,                 // Only move the div if it is dragged more than 20px (prevent accidents)
         helper: "clone",            // Makes a "clone" of the dragged object, instead of "moving" it
-        revert: "invalid"             // Animates the invalid placement of new premise back to original place
+        revert: "invalid",             // Animates the invalid placement of new premise back to original place
+        zIndex: 100
     });
 }
 
@@ -181,7 +284,6 @@ function makeCanvasDroppable() {
         accept: ".rebuttal-demo, .premise-demo",
         tolerance: "intersect",
         drop: function(event, ui) {
-            console.log(ui.draggable.attr("class"));
             if(ui.draggable.attr("class") == "rebuttal-demo ui-draggable") {
                 scope.argumentData.addPremise(true);
             }
@@ -206,6 +308,11 @@ function bindToolbarEventHandlers() {
     });
     $("#addNewRebuttal").click(function() {
         scope.argumentData.addPremise(true);
+    });
+    $("#addNewConnector").click(function() {
+        scope.argumentData.addConnector();
+        scope.$apply();
+        redrawCanvas();
     });
 }
 /**
@@ -240,6 +347,8 @@ function main() {
 
     makeNewPremiseDraggable();
     makeCanvasDroppable();
+    redrawCanvas();
+    setTimeout(redrawCanvas, 500);
 }
 
 $(document).ready(main); // When the document is loaded, run the "main" function
