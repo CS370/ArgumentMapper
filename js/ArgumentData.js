@@ -76,7 +76,7 @@ ArgumentData.prototype.forEachConnector = function(functionToRun) {
  * @param isRebuttal boolean (Optional) If true, we'll mark this as a rebuttal
  * @usage $scope.premises.addPremise();
  */
-ArgumentData.prototype.addPremise = function(isRebuttal){
+ArgumentData.prototype.addPremise = function(isRebuttal, droppedPosition){
     if(typeof(isRebuttal)==='undefined') isRebuttal = false;
 
     console.log("Creating premise with id " + this.getNewID());
@@ -84,8 +84,8 @@ ArgumentData.prototype.addPremise = function(isRebuttal){
         "id": this.getNewID(),
         "title": "",
         "content": "You just added this premise!",
-        "top": 300,
-        "left": 500,
+        "top": droppedPosition.top-75,
+        "left": droppedPosition.left-200,
         "connectedFrom": {},
         "connectsTo": {},
         'additionalClasses': ( isRebuttal ? ' rebuttal' : '' )

@@ -290,10 +290,14 @@ function makeCanvasDroppable() {
         tolerance: "intersect",
         drop: function(event, ui) {
             if(ui.draggable.attr("class") == "rebuttal-demo ui-draggable") {
-                scope.argumentData.addPremise(true);
+                console.log("Added a Rebuttal");
+                console.log(ui.draggable.attr("class"));
+                scope.argumentData.addPremise(true, ui.offset);
             }
             else {
-                scope.argumentData.addPremise();
+                console.log("Added a Premise");
+                console.log(ui.draggable.attr("class"));
+                scope.argumentData.addPremise(false, ui.offset);
             }
         }
     });

@@ -15,8 +15,8 @@ function CanvasPresenter($scope) {
 
 
     // Override the default add() functionality to include a call to the view-updating methods
-    $scope.argumentData.addPremise = function (isRebuttal) {
-        ArgumentData.prototype.addPremise.call(this, isRebuttal);
+    $scope.argumentData.addPremise = function (isRebuttal, droppedPosition) {
+        ArgumentData.prototype.addPremise.call(this, isRebuttal, droppedPosition);
         $scope.$apply();
         makeTextareaAutoResize();
         bindCloseButtonEventHandler();
