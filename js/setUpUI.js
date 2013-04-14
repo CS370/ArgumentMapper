@@ -186,13 +186,18 @@ function drawConnection(connector){
         var left, top;
         if( typeof(connector[type]) !== "object" ) { // We know exactly which element it connects to
             var elementToConnectTo = $("#" + connector[type]);
-            left = elementToConnectTo.position().left + elementToConnectTo.outerWidth() / 2 + elementToConnectTo.offsetParent().position().left;
-            top = elementToConnectTo.position().top + elementToConnectTo.outerHeight() / 2 + elementToConnectTo.offsetParent().position().top;
 
-            if( getOrientation(connector[type]) === Orientations.VERTICAL ) {
-                handleElement.addClass( "connector-vertical", 500 );
-            } else {
-                handleElement.removeClass( "connector-vertical", 500 );
+            if( elementToConnectTo.length > 0 ) { // Element actually exists in DOM
+                left = elementToConnectTo.position().left + elementToConnectTo.outerWidth() / 2 + elementToConnectTo.offsetParent().position().left;
+                top = elementToConnectTo.position().top + elementToConnectTo.outerHeight() / 2 + elementToConnectTo.offsetParent().position().top;
+
+                if( getOrientation(connector[type]) === Orientations.VERTICAL ) {
+                    handleElement.addClass( "connector-vertical", 500 );
+                } else {
+                    handleElement.removeClass( "connector-vertical", 500 );
+                }
+            } else { // Element doesn't exist! Update the model accordingly.
+                connector[type] = [handleElement.position().left, handleElement.position().top];
             }
         } else {
             left = connector[type][0];
