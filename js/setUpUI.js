@@ -328,20 +328,13 @@ function bindToolbarEventHandlers() {
 }
 
 function bindMouseScroll() {
-    function pxToInt(inPx) {
-        if(inPx.length > 0) {
-            return parseInt(inPx.replace('px',''));
-        }
-        return inPx; // Was an int already!
-    }
-
     var canvasContainer = $("#theCanvas");
     canvasContainer.bind('mousewheel', function (event, delta, deltaX, deltaY) {
         /*var currentZoom = parseFloat(canvasContainer.css('zoom'));
         var newZoom = currentZoom + 0.001 * deltaY;
         canvasContainer.css('zoom', newZoom);*/
 
-        var allPremises = canvasContainer.find('.premise');
+        var allPremises = canvasContainer.find('.premise, .rebuttal');
         var firstPremise = $(allPremises[0]);
         var w = firstPremise.width();
 
