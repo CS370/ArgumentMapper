@@ -22,6 +22,8 @@ function makeTextareaAutoResize() {
             $(this).attr('autoresizing', 'true'); // Set a flag so we don't re-bind the autoresizer to this element
             $(this).autoResize({ 'extraSpace': 0 });
             $(this).trigger('change.dynSiz');
+        } else {
+            $(this).trigger('change.dynSiz');
         }
     });
 }
@@ -324,6 +326,49 @@ function bindToolbarEventHandlers() {
         redrawCanvas();
     });
 }
+
+function bindMouseScroll() {
+    function pxToInt(inPx) {
+        if(inPx.length > 0) {
+            return parseInt(inPx.replace('px',''));
+        }
+        return inPx; // Was an int already!
+    }
+
+    var canvasContainer = $("#theCanvas");
+    canvasContainer.bind('mousewheel', function (event, delta, deltaX, deltaY) {
+        /*var currentZoom = parseFloat(canvasContainer.css('zoom'));
+        var newZoom = currentZoom + 0.001 * deltaY;
+        canvasContainer.css('zoom', newZoom);*/
+
+        var allPremises = canvasContainer.find('.premise');
+        var firstPremise = $(allPremises[0]);
+        var w = firstPremise.width();
+
+        var movement = 0.1 * deltaY;
+        allPremises.width(w + movement);
+        for( var i = 0; i < allPremises.length; i++ ) {
+            var premise = allPremises[i];
+            var offset = $(premise).position();
+            console.log(movement);
+            $(premise).css({ top: offset.top - movement/2, left: offset.left - movement/2});
+            $(premise).hide().show();
+        }
+
+
+        // Fix the text
+        var newFontSize = Math.max(w * 0.07777, 12);
+        allPremises.find('.premise-title').css('font-size', newFontSize + "px");
+        makeTextareaAutoResize();
+
+        redrawCanvas();
+
+        event.stopPropagation();
+        event.preventDefault();
+        return false;
+    });
+}
+
 /**
  * Handles the setup of the user interface components
  */
@@ -351,6 +396,7 @@ function main() {
 
     bindToolbarEventHandlers();
     bindCloseButtonEventHandler();
+    bindMouseScroll();
 
     makeTextareaAutoResize();
 

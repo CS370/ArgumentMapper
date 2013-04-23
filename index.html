@@ -34,6 +34,9 @@
     <!-- The JS to make dragging-and-dropping premise boxes happen -->
     <script type="text/javascript" src="js/setUpUI.js"></script>
 
+    <!-- Used for getting mousewheel events -->
+    <script type="text/javascript" src="js/mousewheel.js"></script>
+
     <script src="js/autoresize.jquery.js"></script>
 
     <!-- Misc. styling, just playing with the premise boxes -->
@@ -70,6 +73,7 @@
             height: 600px;
             padding: 1em;
             color: #222;
+            overflow: hidden;
         }
         #theCanvas > * { /* First children of the canvas container */
             position: absolute;
@@ -108,6 +112,7 @@
             -moz-transition: border linear .2s, box-shadow linear .2s;
             -o-transition: border linear .2s, box-shadow linear .2s;
             transition: border linear .2s, box-shadow linear .2s;
+            min-height: 40px;
         }
 
         #argumentTitle {
@@ -115,6 +120,7 @@
             top: 15px;
             left: 15px;
             display: inline;
+            z-index:1000;
         }
 
         textarea.premise-title:focus, #argumentTitle:focus {
@@ -303,8 +309,6 @@
             <premise ng-repeat="premise in premises" model="premise">
 				<button class="close">&times;</button>
                 <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1">{{premise.title}}</textarea>
-                <p>Contents: {{premise.content}}</p>
-                <p>top: {{premise.top}}; left: {{premise.left}}</p>
             </premise>
             <connector ng-repeat="connector in connectors" model="connector">
                 <div id="{{connector.id}}-start" class="connector connector-start"></div>
