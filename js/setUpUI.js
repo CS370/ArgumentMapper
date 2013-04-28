@@ -357,7 +357,27 @@ function bindMouseScroll() {
         return false;
     });
 }
+/**
+ * Gives the options for the droppable premises/rebuttals with Grouping
+ */
+function makePremisesDroppable() {
+    $(".premise, .rebuttal").droppable({      // Accept rebuttal-demo as well
+        accept: ".premise, .rebuttal",
+        tolerance: "touch",
+        drop: function(event, ui) {
+            if($(this).attr("group")==0){
+                $(this).attr("group", $(this).attr("id"));
+            }
 
+            ui.draggable.attr("group", $(this).attr("group"));
+
+            ui.draggable.addClass("grouped");
+            $(this).addClass("grouped");
+
+            console.log(this);
+        }
+    });
+}
 /**
  * Handles the setup of the user interface components
  */
@@ -391,6 +411,7 @@ function main() {
 
     makeNewPremiseDraggable();
     makeCanvasDroppable();
+    makePremisesDroppable();
     redrawCanvas();
     setTimeout(redrawCanvas, 500);
 }

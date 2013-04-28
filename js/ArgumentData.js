@@ -146,6 +146,7 @@ function Premises() {
         "content": "Lorem ipsum.",
         "top": 100,
         "left": 15,
+        "group": 1234,
         'additionalClasses': ''
     };
     this[8675309] = {
@@ -154,6 +155,7 @@ function Premises() {
         "content": "This description may be useless.",
         "top": 330,
         "left": 200,
+        "group":1234,
         'additionalClasses': ''
     };
     this[2] = {
@@ -162,6 +164,7 @@ function Premises() {
         "content": "This description may be useless.",
         "top": 60,
         "left": 450,
+        "group": 1234,
         'additionalClasses': ''
     };
     this[3] = {
@@ -170,6 +173,7 @@ function Premises() {
         "content": "This description may be useless.",
         "top": 60,
         "left": 950,
+        "group": 1234,
         'additionalClasses': ''
     }
 }
