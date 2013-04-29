@@ -45,7 +45,7 @@ var app = angular.module('ArgumentMapper', []);
  */
 app.directive('premise',function() {
     return {
-        template: '<div class="premise {{model.additionalClasses}}" id="{{model.id}}" ng-style="{ top: model.top, left: model.left}">'
+        template: '<div class="premise {{model.additionalClasses}}" id="{{model.id}}" group="{{model.group}}" ng-style="{ top: model.top, left: model.left}">'
             + '<div ng-transclude>'
             + '<div id="{{model.id}}-top" class="connect-point connect-point-top"></div>'
             + '<div id="{{model.id}}-right" class="connect-point connect-point-right"></div>'
@@ -59,7 +59,7 @@ app.directive('premise',function() {
             model: '='
         },
         link: function postLink(scope, element, iAttrs, ctrl) {
-            element.draggable({
+            $(".premise, .premise-container").draggable({
                 start: function () {          // A dummy method called when a drag starts
                     console.log("Drag started");
                 },

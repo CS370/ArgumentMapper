@@ -268,6 +268,7 @@ function resizeCanvas() {
     redrawCanvas();
 }
 
+
 /**
  * Gives the options for dragging over a new premise box
  */
@@ -365,16 +366,54 @@ function makePremisesDroppable() {
         accept: ".premise, .rebuttal",
         tolerance: "touch",
         drop: function(event, ui) {
+            console.log(this);
+            console.log(event);
+            console.log(ui);
+
+            var idOfThingDroppedOnto = $(this).attr('id');
+            scope.premises[idOfThingDroppedOnto].additionalClasses += " grouped";
+
+
+            var idOfThingDropped = ui.draggable.context.id;
+            scope.premises[idOfThingDropped].additionalClasses += " grouped";
+
             if($(this).attr("group")==0){
-                $(this).attr("group", $(this).attr("id"));
+                //$(this).attr("group", $(this).attr("id"));
+                scope.premises[idOfThingDroppedOnto].group = idOfThingDroppedOnto;
             }
 
-            ui.draggable.attr("group", $(this).attr("group"));
 
-            ui.draggable.addClass("grouped");
-            $(this).addClass("grouped");
+            //ui.draggable.attr("group", $(this).attr("group"));
+            //ui.draggable.addClass("grouped");
 
-            console.log(this);
+            scope.premises[idOfThingDropped].group = scope.premises[idOfThingDroppedOnto].group;
+
+            //var thingThatWasDropped = $("#" + ui.draggable.context.id);
+            //thingThatWasDropped.addClass("grouped");
+
+
+            var droppedPos = $(this).offset();
+            //$(this).addClass("grouped");
+            var id = scope.premises[idOfThingDroppedOnto].group;
+            $(this).wrap('<div class="premise-container" id="' + id + '" />');
+            //$(this).before($("#12345"));
+
+            var container = $("#12345");
+            container.append('<div id="' + id + '-top" class="connect-point connect-point-top"></div>'
+                + '<div id="' + id + '-right" class="connect-point connect-point-right"></div>'
+                + '<div id="' + id + '-bottom" class="connect-point connect-point-bottom"></div>'
+                + '<div id="' + id + '-left" class="connect-point connect-point-left"></div>');
+
+            container.append(thingThatWasDropped);
+            console.log(thingThatWasDropped);
+            container.offset({
+                top: droppedPos.top,
+                left: droppedPos.left
+            });
+            $(this).css({top: 0, left: 0});
+;
+            scope.$apply();
+            redrawCanvas();
         }
     });
 }

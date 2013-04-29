@@ -96,6 +96,7 @@
             top: 0; /* set these so Chrome doesn't return 'auto' from getComputedStyle */
             box-shadow: 0 0 7px #666;
             cursor: move;
+            z-index: 1;
         }
         textarea.premise-title, #argumentTitle {
             border: none;
@@ -166,6 +167,15 @@
 
         .rebuttal-demo:hover {
             color: #333;
+        }
+        .grouped {
+            position: static;
+        }
+        .premise-container {
+            background: #93959e;
+            border: 2px solid rgba(82, 168, 236, 0.9);
+            border-radius: 4px;
+            padding: 4px;
         }
         .close {
             position: absolute;
@@ -314,6 +324,7 @@
             <premise ng-repeat="premise in premises" model="premise">
 				<button class="close">&times;</button>
                 <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1">{{premise.title}}</textarea>
+                <p>{{premise.group}}</p>
             </premise>
             <connector ng-repeat="connector in connectors" model="connector">
                 <div id="{{connector.id}}-start" class="connector connector-start"></div>
