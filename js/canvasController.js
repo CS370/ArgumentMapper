@@ -32,6 +32,7 @@ function CanvasPresenter($scope) {
     $scope.argumentData.addConnector = function (isRebuttal) {
         ArgumentData.prototype.addConnector.call(this, isRebuttal);
         $scope.$apply();
+        bindCloseCanvasEventHandler();
     };
 }
 

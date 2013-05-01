@@ -309,6 +309,14 @@ function bindCloseButtonEventHandler() {
         scope.argumentData.removePremise($(this).parent().parent().attr('id'));
     });
 }
+function bindCloseConnectorEventHandler() {
+    $('.connector').dblclick(function(){
+        console.log($(this).parent().parent());
+        console.log("Deleting connector with ID " + $(this).parent().parent().attr('id').replace("connector-",""));
+        scope.argumentData.removeConnector($(this).parent().parent().attr('id').replace("connector-",""));
+		redrawCanvas();
+    });
+}
 
 function bindToolbarEventHandlers() {
     $("#addNewPremise").click(function() {
@@ -444,6 +452,7 @@ function main() {
 
     bindToolbarEventHandlers();
     bindCloseButtonEventHandler();
+	bindCloseConnectorEventHandler();
     bindMouseScroll();
 
     makeTextareaAutoResize();
