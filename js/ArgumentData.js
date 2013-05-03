@@ -7,6 +7,8 @@
 function ArgumentData() {
     this._premises = new Premises();
     this._connectors = new Connectors();
+    this._containers = new Containers();
+    this._title = "Was the moon landing staged?";
 }
 
 
@@ -25,9 +27,12 @@ ArgumentData.prototype.getPremiseList = function() {
  * @returns string The title of the argument
  */
 ArgumentData.prototype.getTitle = function() {
-    return "Was the moon landing stage?";
+    return this._title;
 };
 
+ArgumentData.prototype.setTitle = function( theTitle ) {
+    this._title = theTitle;
+};
 
 /**
  * Loads the connectors in the argument. Currently a mock for database interactions.
@@ -72,24 +77,59 @@ ArgumentData.prototype.forEachConnector = function(functionToRun) {
 };
 
 /**
+ * Loads the connectors in the argument. Currently a mock for database interactions.
+ * @returns {{int: {start: string, end: string}, . . .}}
+ */
+ArgumentData.prototype.getContainersList = function() {
+    // Need to add the list of premise objects (rather than just their IDs)
+    for( var key in this._containers ) {
+        this._containers[key].premises = [];
+        if( key != 'premises' ) {
+            var crntContainer = this._containers[key];
+
+            // For each premise in the list of contained premises
+            for( var crntPremise = 0; crntPremise < crntContainer.containedPremisesIDs.length; crntPremise++ ) {
+                var containedPremiseID = crntContainer.containedPremisesIDs[crntPremise];
+                crntContainer.premises.push(this._premises[containedPremiseID]);
+
+                if( this._premises[containedPremiseID].group != key ) {
+                    console.log("\tFound premise " + containedPremiseID + " is not actually in group " + key);
+                    this.removeContainer(key);
+                    break;
+                }
+            }
+        }
+    }
+
+    return this._containers;
+}
+
+/**
  * Creates a new premise in the scope's list of premises.
- * @param isRebuttal boolean (Optional) If true, we'll mark this as a rebuttal
+ * @param isRebuttal boolean If true, we'll mark this as a rebuttal
+ * @param droppedPosition {top: number, left: number} The position of the new premise in the canvas
+ * @return The ID of the newly created premise
  * @usage $scope.premises.addPremise();
  */
 ArgumentData.prototype.addPremise = function(isRebuttal, droppedPosition){
     if(typeof(isRebuttal)==='undefined') isRebuttal = false;
 
-    console.log("Creating premise with id " + this.getNewID());
-    this._premises[this.getNewID()] = {
-        "id": this.getNewID(),
+    if(typeof(droppedPosition)==='undefined') droppedPosition = {top: 200, left: 300};
+
+    var newID = this.getNewID();
+    console.log("Creating premise with id " + newID);
+    this._premises[newID] = {
+        "id": newID,
         "title": "",
         "content": "You just added this premise!",
         "top": droppedPosition.top-75,
         "left": droppedPosition.left-200,
         "connectedFrom": {},
         "connectsTo": {},
-        'additionalClasses': ( isRebuttal ? ' rebuttal' : '' )
+        'additionalClasses': ( isRebuttal ? ' rebuttal' : '' ),
+        'group': 0
     };
+    return newID;
 };
 
 /**
@@ -98,6 +138,23 @@ ArgumentData.prototype.addPremise = function(isRebuttal, droppedPosition){
  */
 ArgumentData.prototype.removePremise = function(premiseID){
     delete this._premises[premiseID];
+    console.log(this._containers);
+    for( var key in this._containers ) {
+        var premisesObjects = this._containers[key].premises;
+        for( var premiseObject = 0; premiseObject< premisesObjects.length; premiseObject++) {
+            if( premisesObjects[premiseObject].id == premiseID ) {
+                premisesObjects.remove(premiseObject)
+
+                var idList = this._containers[key].containedPremisesIDs;
+                for( var i = 0; i < idList.length; i++ ) {
+                    if( idList[i] == premiseID ) {
+                        idList.remove(i);
+                    }
+                }
+            }
+        }
+    }
+    console.log(this._containers);
 };
 
 /**
@@ -128,6 +185,124 @@ ArgumentData.prototype.getNewID = function () {
 };
 
 
+/**
+ * Creates a new premise in the scope's list of premises.
+ * @param idOfThingDroppedOnto {number} The ID of the first premise (the one that was dropped onto)
+ * @param idOfThingDropped {number} the ID of the second premise (the one that was dropped)
+ */
+ArgumentData.prototype.addContainer = function(idOfThingDroppedOnto, idOfThingDropped){
+    function replaceIndex( startOrEnd, idToCheck, idToReplaceWith ) {
+        if( connector[startOrEnd].indexOf(idToCheck) >= 0 ) {
+            // Replace the ID with this one
+            // parseInt pulls the leading int out of the string
+            console.log("Replacing a connector: rather than connecting to " + connector[startOrEnd] + ",");
+            connector[startOrEnd] = connector[startOrEnd].replace(parseInt(connector[startOrEnd]), idToReplaceWith);
+            console.log("                       we'll connect to " + connector[startOrEnd]);
+        }
+    }
+
+    // Create the container
+    var position = {
+        top: this._premises[idOfThingDroppedOnto].top,
+        left: this._premises[idOfThingDroppedOnto].left
+    };
+
+    var containerID = this.getNewID();
+    console.log("Creating container with id " + containerID);
+    this._containers[containerID] = {
+        "id": containerID,
+        "containedPremisesIDs": [idOfThingDropped, idOfThingDroppedOnto],
+        "top": position.top,
+        "left": position.left
+    };
+
+    // Add necessary classes to the premises
+    this._premises[idOfThingDroppedOnto].additionalClasses += " grouped";
+    this._premises[idOfThingDropped].additionalClasses += " grouped";
+
+    // Set the group IDs to match the container
+    if(!this.premiseIsGrouped(idOfThingDroppedOnto)){
+        this._premises[idOfThingDroppedOnto].group = containerID;
+        console.log("Group of the premise you dropped onto is now " + this._premises[idOfThingDroppedOnto].group);
+    } else {
+        console.log("That premise was already grouped.");
+    }
+    this._premises[idOfThingDropped].group = containerID;
+    console.log("Group of the premise you dropped is now " + this._premises[idOfThingDropped].group);
+
+
+    // If these premises had connectors attached, re-attach the connectors to the box
+    for( var connectorID in this._connectors ) {
+        var connector = this._connectors[connectorID];
+
+        // If these were connected to each other
+        if( (connector.start.indexOf(idOfThingDropped) >= 0 && connector.end.indexOf(idOfThingDroppedOnto) >= 0)
+            || (connector.end.indexOf(idOfThingDropped) >= 0 && connector.start.indexOf(idOfThingDroppedOnto) >= 0) ) {
+            delete this._connectors[connectorID];
+        } else {
+            var keysToCheck = ["start", "end"];
+            var idsToCheck = [idOfThingDropped, idOfThingDroppedOnto];
+            for( var i = 0; i < keysToCheck.length; i++ ) {
+                for( var j = 0; j < idsToCheck.length; j++ ) {
+                    replaceIndex(keysToCheck[i], idsToCheck[j], containerID);
+                }
+            }
+        }
+    }
+
+    return containerID;
+};
+
+/**
+ * @param premiseID {number} The ID of the premise in question
+ * @returns {boolean} True if the premise in question is indeed grouped with others (inside a container)
+ */
+ArgumentData.prototype.premiseIsGrouped = function(premiseID) {
+    return (typeof(this._premises[premiseID].group) !== "undefined" && this._premises[premiseID].group > 0 );
+}
+
+/**
+ * Adds a premise to an existing container
+ * @param idOfPremise number The ID of the premise to add
+ * @param idOfContainer number The container to add this premise to
+ */
+ArgumentData.prototype.addPremiseToContainer = function(idOfPremise, idOfContainer){
+    this._containers[idOfContainer].containedPremisesIDs.push(idOfPremise);
+}
+
+/**
+ * Removes a container from the list of containers.
+ * @param containerID The ID of the container to be removed.
+ */
+ArgumentData.prototype.removeContainer = function(containerID){
+    console.log("Deleting container:");
+    console.log(this._containers[containerID]);
+
+    // Ungroup all contained premises
+    var containedPremiseIDs = this._containers[containerID].containedPremisesIDs;
+    for(var i = 0; i < containedPremiseIDs.length; i++ ) {
+        var premise = this._premises[containedPremiseIDs[i]];
+        premise.group = 0;
+        premise.additionalClasses = premise.additionalClasses.replace("grouped", "");
+
+        // TODO: Place the premises in a place that makes sense
+    }
+
+    delete this._containers[containerID];
+};
+
+/**
+ * Deletes all premises, containers, and connectors in the argument.
+ */
+ArgumentData.prototype.clearArgument = function() {
+    console.log("Clearing all premises, connectors, and containers!");
+    this._premises = {};
+    this._connectors = {};
+    this._containers = {};
+    this._title = "";
+};
+
+
 Sides = {
     TOP : 0,
     RIGHT : 1,
@@ -146,8 +321,8 @@ function Premises() {
         "content": "Lorem ipsum.",
         "top": 100,
         "left": 15,
-        "group": 0,
-        'additionalClasses': ''
+        "group": 100,
+        'additionalClasses': 'grouped'
     };
     this[8675309] = {
         "id": 8675309,
@@ -155,15 +330,15 @@ function Premises() {
         "content": "This description may be useless.",
         "top": 330,
         "left": 200,
-        "group":0,
-        'additionalClasses': ''
+        "group":100,
+        'additionalClasses': 'grouped'
     };
     this[2] = {
         "id": 2,
         "title": "New premise.",
         "content": "This description may be useless.",
-        "top": 60,
-        "left": 450,
+        "top": 360,
+        "left": 550,
         "group": 0,
         'additionalClasses': ''
     };
@@ -172,7 +347,7 @@ function Premises() {
         "title": "Far right side.",
         "content": "This description may be useless.",
         "top": 60,
-        "left": 950,
+        "left": 650,
         "group": 0,
         'additionalClasses': ''
     }
@@ -181,12 +356,28 @@ function Premises() {
 function Connectors() {
     this[3] = {
         id: 3,
-        start: "1234-bottom",
-        end: "8675309-left"
+        start: "2-top",
+        end: "3-bottom"
     };
     this[4] = {
         id: 4,
         start: "2-left",
-        end: "1234-right"
+        end: "100-right"
     };
 }
+
+function Containers() {
+    this[100] = {
+        id: 100,
+        containedPremisesIDs: [1234, 8675309],
+        top: 60,
+        left: 80
+    }
+}
+
+
+Array.prototype.remove = function(from, to) {
+    var rest = this.slice((to || from) + 1 || this.length);
+    this.length = from < 0 ? this.length + from : from;
+    return this.push.apply(this, rest);
+};

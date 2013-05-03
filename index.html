@@ -114,6 +114,7 @@
             -o-transition: border linear .2s, box-shadow linear .2s;
             transition: border linear .2s, box-shadow linear .2s;
             min-height: 40px;
+            margin-bottom: 0;
         }
 
         #argumentTitle {
@@ -169,7 +170,9 @@
             color: #333;
         }
         .grouped {
-            position: static;
+            position: relative;
+            top: 0 !important;
+            left: 0 !important;
         }
         .premise-container {
             background: #93959e;
@@ -272,7 +275,7 @@
                         <li class="dropdown">
                             <a class="dropdown-toggle" data-toggle="dropdown" href="#">File <b class="caret"></b></a>
                             <ul class="dropdown-menu" id="swatch-menu">
-                                <li><a href="#">New</a></li>
+                                <li id="createNewArgument"><a href="#">New</a></li>
                                 <li><a href="#">Save</a></li>
                                 <li class="divider"></li>
                                 <li><a href="#">Share</a></li>
@@ -356,51 +359,26 @@
             -->
         <div ng-controller="CanvasPresenter" id="theCanvas" class="span10">
             <canvas id="drawing" width="578" height="200"></canvas>
-            <input value="{{title}}" id="argumentTitle"/>
+            <input ng-model="title" value="{{title}}" id="argumentTitle" placeholder="Title of the argument" />
             <!-- Note: premise element defined by a Directive in canvasController.js -->
-            <premise ng-repeat="premise in premises" model="premise">
+
+            <premise-container ng-repeat="container in containers" model="container">
+                <premise ng-repeat="premise in container.premises" model="premise">
+                    <button class="close">&times;</button>
+                    <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1" ng-model="premise.title"></textarea>
+                </premise>
+            </premise-container>
+
+            <premise ng-repeat="premise in uncontainedPremises" model="premise">
 				<button class="close">&times;</button>
-                <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1">{{premise.title}}</textarea>
-                <p>{{premise.group}}</p>
+                <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1" ng-model="premise.title"></textarea>
             </premise>
+
             <connector ng-repeat="connector in connectors" model="connector">
                 <div id="{{connector.id}}-start" class="connector connector-start"></div>
                 <div id="{{connector.id}}-end" class="connector connector-end"></div>
             </connector>
         </div>
-
-    </div>
-
-    <div class="container">
-        <h2>Miscellaneous Angular.JS examples</h2>
-
-        <!-- Data binding! The binding tells Angular that it should evaluate this expression and insert
-        the result into the DOM in place of the binding.
-
-        (In this case, it concatenates the string "Javascript" to the strings of a single space and
-        "style!".)
-
-        Rather than a one-time insert, as you'll see in the following code, a binding will
-        result in efficient, continuous updates whenever the result of the
-        expression evaluation changes. -->
-        <p>This is {{'Javascript' + ' ' + 'style!'}}</p>
-
-        <!-- One more example of Javascript expression evaluation -->
-        <p>1 + 2 = {{ 1 + 2 }}</p>
-
-        <!-- Data binding, mo betta.
-        The ng-model="yourName" bit tells Angular that the text in this field
-        will be the model (in the MVC/MVP sense of the word) for this scope's
-        variable called yourName.
-
-        Thus, when you type in the box, you change the yourName variable and
-        instantly update all copies of that variable---the "Hello {{yourName}}"
-        bit updates instantly!
-        -->
-        <label>Name:</label>
-        <input type="text" ng-model="yourName" placeholder="Enter a name here">
-        <hr>
-        <h1>Hello {{yourName}}!!!!</h1>
 
     </div>
 </body>

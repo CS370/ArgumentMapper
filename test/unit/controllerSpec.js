@@ -33,7 +33,7 @@ describe('Canvas presenter', function() {
         expect($scope.title.length).toBeGreaterThan(0);
     });
 
-    it('should have legal positions', function() {
+    it('should have legal positions for all premises', function() {
         var params = {
             $scope: $scope
         };
@@ -42,6 +42,7 @@ describe('Canvas presenter', function() {
         $scope.argumentData.addPremise();
 
         $scope.argumentData.forEachPremise( function(premise){
+            console.log(premise);
             expect(premise.top).toBeGreaterThan(0);
             expect(premise.left).toBeGreaterThan(0);
         });
@@ -67,5 +68,35 @@ describe('Canvas presenter', function() {
         var oldSize = Object.keys($scope.premises).length;
         $scope.argumentData.addPremise();
         expect(Object.keys($scope.premises).length).toBeGreaterThan(oldSize);
+    });
+
+    it('should be able to add containers around premises', function() {
+        var params = {
+            $scope: $scope
+        };
+        var ctrl = $controller('CanvasPresenter', params);
+
+        var id0 = $scope.argumentData.addPremise();
+        var id1 = $scope.argumentData.addPremise();
+        var containerID = $scope.argumentData.addContainer(id0, id1);
+        expect($scope.containers[containerID].containedPremisesIDs.length).toBe(2);
+        expect($scope.argumentData.premiseIsGrouped(id0)).toBe(true);
+        expect($scope.argumentData.premiseIsGrouped(id1)).toBe(true);
+    });
+
+    it('should be able to remove premises from containers', function() {
+        var params = {
+            $scope: $scope
+        };
+        var ctrl = $controller('CanvasPresenter', params);
+
+        var id0 = $scope.argumentData.addPremise();
+        var id1 = $scope.argumentData.addPremise();
+        var containerID = $scope.argumentData.addContainer(id0, id1);
+        $scope.argumentData.removeContainer(containerID);
+
+        expect(typeof($scope.containers[containerID])).toBe("undefined");
+        expect($scope.argumentData.premiseIsGrouped(id0)).toBe(false);
+        expect($scope.argumentData.premiseIsGrouped(id1)).toBe(false);
     });
 });

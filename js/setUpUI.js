@@ -249,13 +249,6 @@ function drawConnections() {
 }
 
 /**
- * Performs all drawing actions. Must be called each time you update anything on the canvas element.
- */
-function redrawCanvas() {
-    drawConnections();
-}
-
-/**
  * Called whenever the browser window is resized.
  *
  * Because the size of the canvas element is relative to the size of the window, and the canvas requires
@@ -268,7 +261,6 @@ function resizeCanvas() {
 
     redrawCanvas();
 }
-
 
 /**
  * Gives the options for dragging over a new premise box
@@ -293,7 +285,7 @@ function makeCanvasDroppable() {
         accept: ".rebuttal-demo, .premise-demo",
         tolerance: "intersect",
         drop: function(event, ui) {
-            if(ui.draggable.attr("class") == "rebuttal-demo ui-draggable") {
+            if(ui.draggable.attr("class").indexOf("rebuttal") > 0) {
                 scope.argumentData.addPremise(true, ui.offset);
             }
             else {
@@ -305,7 +297,6 @@ function makeCanvasDroppable() {
 
 function bindCloseButtonEventHandler() {
     $('.premise .close').click(function(){
-        console.log($(this).parent().parent());
         console.log("Deleting premise with ID " + $(this).parent().parent().attr('id'));
         scope.argumentData.removePremise($(this).parent().parent().attr('id'));
     });
@@ -335,15 +326,16 @@ function bindToolbarEventHandlers() {
 		
         redrawCanvas();
     });
+    $("#createNewArgument").click(function() {
+        scope.argumentData.clearArgument();
+        updateFromModel();
+        redrawCanvas();
+    });
 }
 
 function bindMouseScroll() {
     var canvasContainer = $("#theCanvas");
     canvasContainer.bind('mousewheel', function (event, delta, deltaX, deltaY) {
-        /*var currentZoom = parseFloat(canvasContainer.css('zoom'));
-        var newZoom = currentZoom + 0.001 * deltaY;
-        canvasContainer.css('zoom', newZoom);*/
-
         var allPremises = canvasContainer.find('.premise, .rebuttal');
         var firstPremise = $(allPremises[0]);
         var w = firstPremise.width();
@@ -353,7 +345,6 @@ function bindMouseScroll() {
         for( var i = 0; i < allPremises.length; i++ ) {
             var premise = allPremises[i];
             var offset = $(premise).position();
-            console.log(movement);
             $(premise).css({ top: offset.top - movement/2, left: offset.left - movement/2});
             $(premise).hide().show();
         }
@@ -375,61 +366,59 @@ function bindMouseScroll() {
  * Gives the options for the droppable premises/rebuttals with Grouping
  */
 function makePremisesDroppable() {
-    $(".premise, .rebuttal").droppable({      // Accept rebuttal-demo as well
-        accept: ".premise, .rebuttal",
-        tolerance: "touch",
-        drop: function(event, ui) {
-            console.log(this);
-            console.log(event);
-            console.log(ui);
+    if( $("#theCanvas").length > 0 ) {
+        $(".premise, .rebuttal").droppable({      // Accept rebuttal-demo as well
+            accept: ".premise, .rebuttal",
+            tolerance: "touch",
+            drop: function(event, ui) {
+                var idOfThingDroppedOnto = $(this).attr('id');
+                var idOfThingDropped = ui.draggable.context.id;
+                console.log("Grouping premises " + idOfThingDroppedOnto + " and " + idOfThingDropped);
 
-            var idOfThingDroppedOnto = $(this).attr('id');
-            scope.premises[idOfThingDroppedOnto].additionalClasses += " grouped";
+                if(scope.argumentData.premiseIsGrouped(idOfThingDroppedOnto)) {
+                    console.log("That was already grouped! Haven't implemented this yet....");
+                } else {
+                    scope.argumentData.addContainer(idOfThingDroppedOnto, idOfThingDropped);
+                }
 
-
-            var idOfThingDropped = ui.draggable.context.id;
-            scope.premises[idOfThingDropped].additionalClasses += " grouped";
-
-            if($(this).attr("group")==0){
-                //$(this).attr("group", $(this).attr("id"));
-                scope.premises[idOfThingDroppedOnto].group = idOfThingDroppedOnto;
+                scope.$apply();
+                redrawCanvas();
+                bindHandlersForPremises();
             }
-
-
-            //ui.draggable.attr("group", $(this).attr("group"));
-            //ui.draggable.addClass("grouped");
-
-            scope.premises[idOfThingDropped].group = scope.premises[idOfThingDroppedOnto].group;
-
-            //var thingThatWasDropped = $("#" + ui.draggable.context.id);
-            //thingThatWasDropped.addClass("grouped");
-
-
-            var droppedPos = $(this).offset();
-            //$(this).addClass("grouped");
-            var id = scope.premises[idOfThingDroppedOnto].group;
-            $(this).wrap('<div class="premise-container" id="' + id + '" />');
-            //$(this).before($("#12345"));
-
-            var container = $("#12345");
-            container.append('<div id="' + id + '-top" class="connect-point connect-point-top"></div>'
-                + '<div id="' + id + '-right" class="connect-point connect-point-right"></div>'
-                + '<div id="' + id + '-bottom" class="connect-point connect-point-bottom"></div>'
-                + '<div id="' + id + '-left" class="connect-point connect-point-left"></div>');
-
-            container.append(thingThatWasDropped);
-            console.log(thingThatWasDropped);
-            container.offset({
-                top: droppedPos.top,
-                left: droppedPos.left
-            });
-            $(this).css({top: 0, left: 0});
-;
-            scope.$apply();
-            redrawCanvas();
-        }
-    });
+        });
+    } else {
+        console.log("Canvas doesn't exist.");
+        console.log("If you're running a unit test, this is perfectly normal; otherwise, something awful has happened!");
+    }
 }
+
+function bindHandlersForPremises() {
+    bindCloseButtonEventHandler();
+    makePremisesDroppable();
+}
+
+
+/**
+ * Performs all drawing actions. Must be called each time you update anything on the canvas element.
+ */
+function redrawCanvas() {
+    drawConnections();
+}
+
+/**
+ * Updates the view (including all premises, containers, and connectors) from the model
+ */
+function updateFromModel() {
+    if( typeof(scope) !== "undefined" ) {
+        scope.update();
+        scope.$apply();
+    } else {
+        console.log("Scope doesn't exist.");
+        console.log("If you're running a unit test, this is perfectly normal; otherwise, something awful has happened!");
+    }
+}
+
+
 /**
 *Changes the color of premise
 */
@@ -490,15 +479,14 @@ function main() {
 
 
     bindToolbarEventHandlers();
-    bindCloseButtonEventHandler();
-	bindCloseConnectorEventHandler();
     bindMouseScroll();
 
     makeTextareaAutoResize();
 
     makeNewPremiseDraggable();
     makeCanvasDroppable();
-    makePremisesDroppable();
+    bindHandlersForPremises();
+    bindCloseConnectorEventHandler();
     redrawCanvas();
     setTimeout(redrawCanvas, 500);
 }
