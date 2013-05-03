@@ -147,13 +147,14 @@
             -->
         <div ng-controller="CanvasPresenter" id="theCanvas" class="span10">
             <canvas id="drawing" width="578" height="200"></canvas>
-            <input ng-model="title" id="argumentTitle" placeholder="Title of the argument" />
+            <input ng-model="title" id="argumentTitle" placeholder="Title of the argument" ng-change="changeTitle()"/>
             <!-- Note: premise element defined by a Directive in canvasController.js -->
 
             <premise-container ng-repeat="container in containers" model="container">
                 <premise ng-repeat="premise in container.premises" model="premise">
                     <button class="close">&times;</button>
                     <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1" ng-model="premise.title"></textarea>
+                    <p>{{title}}</p>
                 </premise>
             </premise-container>
 

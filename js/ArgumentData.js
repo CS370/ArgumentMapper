@@ -24,7 +24,7 @@ ArgumentData.prototype.getPremiseList = function() {
 
 
 /**
- * @returns string The title of the argument
+ * @returns {string} The title of the argument
  */
 ArgumentData.prototype.getTitle = function() {
     return this._title;

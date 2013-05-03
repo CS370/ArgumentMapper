@@ -82,7 +82,6 @@ textarea.premise-title, #argumentTitle {
     -moz-transition: border linear .2s, box-shadow linear .2s;
     -o-transition: border linear .2s, box-shadow linear .2s;
     transition: border linear .2s, box-shadow linear .2s;
-    min-height: 40px;
     margin-bottom: 0;
 }
 

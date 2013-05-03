@@ -8,6 +8,12 @@
  * Created by Tyler Young on 4 April 2013.
  */
 function CanvasPresenter($scope) {
+    $scope.changeTitle = function() {
+        // Since the title is a primitive rather than an object,
+        // Angular doesn't automatically sync with the model
+        $scope.argumentData.setTitle($scope.title);
+
+    };
     $scope.update = function() {
         $scope.containers = $scope.argumentData.getContainersList();
         console.log("Containers:");
@@ -26,6 +32,7 @@ function CanvasPresenter($scope) {
 
         $scope.connectors = $scope.argumentData.getConnectorsList();
 
+        $scope.title = $scope.argumentData.getTitle();
     }
 
     $scope.argumentData = new ArgumentData();

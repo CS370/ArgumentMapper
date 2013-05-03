@@ -268,7 +268,9 @@ function makeCanvasDroppable() {
         accept: ".rebuttal-demo, .premise-demo",
         tolerance: "intersect",
         drop: function(event, ui) {
-            if(ui.draggable.attr("class").indexOf("rebuttal") > 0) {
+            console.log(ui.draggable.attr("class"));
+            console.log(ui.draggable.attr("class").indexOf("rebuttal"));
+            if(ui.draggable.attr("class").indexOf("rebuttal") >= 0) {
                 scope.argumentData.addPremise(true, ui.offset);
             }
             else {
@@ -388,6 +390,7 @@ function makePremisesDroppable() {
 }
 
 function bindHandlersForPremises() {
+    makeTextareaAutoResize();
     bindCloseButtonEventHandler();
     makePremisesDroppable();
 }
@@ -475,8 +478,6 @@ function main() {
 
     bindToolbarEventHandlers();
     bindMouseScroll();
-
-    makeTextareaAutoResize();
 
     makeNewPremiseDraggable();
     makeCanvasDroppable();
