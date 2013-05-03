@@ -29,23 +29,6 @@ function makeTextareaAutoResize() {
 }
 
 /**
- * Returns the Presenter's copy (the model, loaded by canvasController.js)
- * of the argument map element with the given ID.
- * @param id int The ID of the premise to search for
- * @returns A premise object
- */
-function findInScope(id) {
-    if( id in scope.premises ) {
-        return scope.premises[id];
-    }
-    console.log("Couldn't find premise with ID " + id.toString());
-    console.log("Attributes: ");
-    for( var key in id) {
-        console.log("\t" + id[key]);
-    }
-}
-
-/**
  * Draws the connection between the premise with the specified ID and
  * all elements to which it is connected.
  *
@@ -295,12 +278,21 @@ function makeCanvasDroppable() {
     });
 }
 
+/**
+ * When the X in the upper-right of a premise is clicked,
+ * that premise is "closed" (deleted)
+ */
 function bindCloseButtonEventHandler() {
     $('.premise .close').click(function(){
         console.log("Deleting premise with ID " + $(this).parent().parent().attr('id'));
         scope.argumentData.removePremise($(this).parent().parent().attr('id'));
     });
 }
+
+/**
+ * When one of a connector's ends is double-clicked, the connector should
+ * be "closed" (deleted)
+ */
 function bindCloseConnectorEventHandler() {
     $('.connector').dblclick(function(){
         console.log($(this).parent().parent());
@@ -333,6 +325,9 @@ function bindToolbarEventHandlers() {
     });
 }
 
+/**
+ * Handles the zooming of the canvas
+ */
 function bindMouseScroll() {
     var canvasContainer = $("#theCanvas");
     canvasContainer.bind('mousewheel', function (event, delta, deltaX, deltaY) {
@@ -423,34 +418,34 @@ function updateFromModel() {
 *Changes the color of premise
 */
 function changeNewColor(){
-var mylist=document.getElementById("favColor");
-var color = mylist.options[mylist.selectedIndex].text;
+    var mylist = document.getElementById("favColor");
+    var color = mylist.options[mylist.selectedIndex].text;
 
-$(".premise").css("background-color", color);
-$(".premise").css("background-image", "linear-gradient(to bottom, " + color + ", #d9d9d9)");
- console.log(color);
+    $(".premise").css({
+        "background-color": color,
+        "background-image": "linear-gradient(to bottom, " + color + ", #d9d9d9)"
+    });
 
-redrawCanvas();
-
+    redrawCanvas();
 }
 
 /**
 *Changes the color of connector
 */
 function changeConnectorColor(){
-var mylist=document.getElementById("favConnectorColor");
-var color = mylist.options[mylist.selectedIndex].text;
+    var mylist = document.getElementById("favConnectorColor");
+    var color = mylist.options[mylist.selectedIndex].text;
 
-$(".connector").css("background-color", color);
-$(".connector").css("background-image", "-moz-linear-gradient(top,"+color+","+color+")");
-$(".connector").css("background-image", "-webkit-gradient(linear,0 0,0 100%,from("+color+"),to("+color+"))");
-$(".connector").css("background-image", "-webkit-linear-gradient(top,"+color+","+color+")");
-$(".connector").css("background-image", "-o-linear-gradient(top,"+color+","+color+")");
-$(".connector").css("background-image", "linear-gradient(to bottom,"+color+","+color+")");
- console.log(color);
+    $(".connector").css({
+        "background-color": color,
+        "background-image": "-moz-linear-gradient(top,"+color+","+color+")",
+        "background-image": "-webkit-gradient(linear,0 0,0 100%,from("+color+"),to("+color+"))",
+        "background-image": "-webkit-linear-gradient(top,"+color+","+color+")",
+        "background-image": "-o-linear-gradient(top,"+color+","+color+")",
+        "background-image": "linear-gradient(to bottom,"+color+","+color+")"
+    });
 
-redrawCanvas();
-
+    redrawCanvas();
 }
 
 /**

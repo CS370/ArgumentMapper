@@ -24,7 +24,6 @@ function CanvasPresenter($scope) {
         console.log("Uncontained premises:");
         console.log($scope.uncontainedPremises);
 
-        $scope.title = $scope.argumentData.getTitle();
         $scope.connectors = $scope.argumentData.getConnectorsList();
 
     }

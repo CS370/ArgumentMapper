@@ -12,6 +12,9 @@
         More info: http://bootswatch.com/slate/ -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Styling for the app -->
+    <link href="css/argumentMapper.css" rel="stylesheet"/>
+
     <!-- jQuery, for Javascript++ -->
     <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 
@@ -20,13 +23,21 @@
     <script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
 
     <!-- Bootstrap Javascript, for more UI stuff -->
-    <script src="js/bootstrap.min.js"></script>
+    <script src="lib/bootstrap.min.js"></script>
 
     <!-- include the Angular.js presentation framework -->
-    <script src="lib/angular.min.js"></script>
+    <script src="lib/angular/angular.min.js"></script>
 
     <!-- The Presenter's interface to the model -->
     <script src="js/ArgumentData.js"></script>
+
+    <!-- Classes used to represent things in the model -->
+    <script src="js/classes/Connectors.js"></script>
+    <script src="js/classes/Containers.js"></script>
+    <script src="js/classes/Premises.js"></script>
+    <script src="js/classes/Sides.js"></script>
+
+    <script src="js/addFunctionalityToBuiltInTypes.js"></script>
 
     <!-- Our controller (presenter) for handling the premises -->
     <script type="text/javascript" src="js/canvasController.js"></script>
@@ -35,227 +46,10 @@
     <script type="text/javascript" src="js/setUpUI.js"></script>
 
     <!-- Used for getting mousewheel events -->
-    <script type="text/javascript" src="js/mousewheel.js"></script>
+    <script type="text/javascript" src="lib/mousewheel.js"></script>
 
-    <script src="js/autoresize.jquery.js"></script>
+    <script src="lib/autoresize.jquery.js"></script>
 
-    <!-- Misc. styling, just playing with the premise boxes -->
-    <style>
-        body {
-            padding-bottom: 5em;
-            padding-top: 40px;
-        }
-        h3, h4 {
-            text-shadow: none;
-        }
-        .navbar-fixed-top .container {
-            width: 95%;
-        }
-        .navbar-inverse .brand.active {
-            color: #ddd;
-        }
-        .dropdown-menu {
-            margin: -2px 0 0;
-        }
-        #sidebar {
-            padding: 1em 0 1em 1em;
-        }
-        .nav-list, .nav>li>a {
-            background-color: transparent;
-            box-shadow: none;
-            padding-right: 0;
-        }
-        #theCanvas {
-            position: relative;
-            background: url("img/fabricBackground.png") repeat;
-            border: 1px solid #333;
-            border-radius: 0 0 4px 4px;
-            height: 600px;
-            padding: 1em;
-            color: #222;
-            overflow: hidden;
-        }
-        #theCanvas > * { /* First children of the canvas container */
-            position: absolute;
-        }
-        #drawing {
-            width: 100%;
-            height: 600px;
-            position: relative;
-        }
-        .premise, .premise-demo, .rebuttal, .rebuttal-demo {
-            background-color: #fff;
-            border: 1px solid #333;
-            background-image: linear-gradient(to bottom,#fff,#d9d9d9);
-            border-radius: 4px;
-            width: 15em;
-            padding: 1em;
-            margin: 0.5em;
-            position:  absolute;
-            left: 0;
-            top: 0; /* set these so Chrome doesn't return 'auto' from getComputedStyle */
-            box-shadow: 0 0 7px #666;
-            cursor: move;
-            z-index: 1;
-        }
-        textarea.premise-title, #argumentTitle {
-            border: none;
-            background: transparent;
-            box-shadow: none;
-            color: #222;
-            padding: 0;
-            font-weight: bold;
-            white-space: normal;
-            width: 90%;
-            max-width: 100%;
-            resize: none !important;
-            -webkit-transition: border linear .2s, box-shadow linear .2s;
-            -moz-transition: border linear .2s, box-shadow linear .2s;
-            -o-transition: border linear .2s, box-shadow linear .2s;
-            transition: border linear .2s, box-shadow linear .2s;
-            min-height: 40px;
-            margin-bottom: 0;
-        }
-
-        #argumentTitle {
-            font-size: 2em;
-            top: 15px;
-            left: 15px;
-            display: inline;
-            z-index:1000;
-        }
-
-        textarea.premise-title:focus, #argumentTitle:focus {
-            background-color: #fff;
-            border-color: rgba(82, 168, 236, 0.9);
-            outline: 0;
-            outline: thin dotted 9;
-            -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 1.0);
-            -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 1.0);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(82, 168, 236, 1.0);
-            font-weight: normal;
-            padding: 0 3%;
-            width: 85%;
-            resize: auto;
-        }
-
-        #argumentTitle:focus {
-            padding: 3px 8px;
-            border-radius: 3px;
-        }
-
-        .premise-demo, .rebuttal-demo {
-            display: block;
-            position: inherit;
-            padding: 0.5em;
-            color: #333;
-            margin: 0;
-            text-shadow: none;
-            width: inherit;
-            cursor: pointer;
-            box-shadow: none;
-        }
-
-        .premise-demo:hover {
-            color: #666;
-        }
-
-        .rebuttal, .rebuttal-demo {
-            background-color: #da4f49;
-            background-image: linear-gradient(to bottom, #ee5f5b, #bd362f);
-            color: #222;
-        }
-
-        .rebuttal-demo:hover {
-            color: #333;
-        }
-        .grouped {
-            position: relative;
-            top: 0 !important;
-            left: 0 !important;
-        }
-        .premise-container {
-            background: #93959e;
-            border: 2px solid rgba(82, 168, 236, 0.9);
-            border-radius: 4px;
-            padding: 4px;
-        }
-        .close {
-            position: absolute;
-            top: 5px;
-            right: 10px;
-        }
-        .close:hover {
-            color: #bd362f;
-            opacity: 1.0;
-        }
-
-        .connector-container {
-            overflow: visible;
-            top: 0;
-            left: 0;
-        }
-
-        .connector {
-            height: 10px;
-            width: 30px;
-            border-radius: 2px;
-            background-color: #5bb75b;
-            background-image: -moz-linear-gradient(top,#62c462,#51a351);
-            background-image: -webkit-gradient(linear,0 0,0 100%,from(#62c462),to(#51a351));
-            background-image: -webkit-linear-gradient(top,#62c462,#51a351);
-            background-image: -o-linear-gradient(top,#62c462,#51a351);
-            background-image: linear-gradient(to bottom,#62c462,#51a351);
-            background-repeat: repeat-x;
-            border: 1px solid rgba(0, 0, 0, 0.3);
-            position: absolute;
-            z-index: 100;
-        }
-        .connector-end {
-
-        }
-        .connector-start {
-            width:50px;
-        }
-        .connector-vertical {
-            width: 10px;
-            height: 30px;
-        }
-        .connector-vertical.connector-start {
-            height: 50px;
-        }
-        .connect-point {
-            width: 0;
-            height: 0;
-            /*visibility: hidden;*/
-            position: absolute;
-            background-color: red;
-        }
-        .connect-point-top {
-            top: 0;
-            right: 50%;
-        }
-        .connect-point-right {
-            right: 0;
-            top: 50%;
-        }
-        .connect-point-bottom {
-            bottom: 0;
-            right: 50%;
-        }
-        .connect-point-left {
-            left: 0;
-            top: 50%;
-        }
-		
-		select, option{
-		width: 90%;
-		color: black;
-		}
-		
-		
-	
-    </style>
 </head>
 
 <body id="top" data-spy="scroll">
@@ -313,38 +107,32 @@
                 <li><a href="#" id="addNewPremise"><span class="premise-demo">Add a premise box</span></a></li>
                 <li><a href="#" id="addNewRebuttal"><span class="rebuttal-demo">Add a rebuttal box</span></a></li>
                 <li><a href="#" id="addNewConnector">Add a connector</a></li>
-				<li><a href="#" id="changeColor"><span class="change-color">Change the premise color</span></a>
-		
-				<select id="favColor" onchange="changeNewColor()">
-				<option>white</option>
-				<option>green</option>
-				<option>blue</option>
-				<option>red</option>
-				<option>yellow</option>
-				<option>purple</option>
-				<option>grey</option>
-				<option>tan</option>
-				
-				</select>
+				<li class="nav-header">
+                    <a href="#" id="changeColor"><span class="change-color">Change the premise color</span></a>
+                    <select id="favColor" onchange="changeNewColor()">
+                        <option>white</option>
+                        <option>green</option>
+                        <option>blue</option>
+                        <option>red</option>
+                        <option>yellow</option>
+                        <option>purple</option>
+                        <option>grey</option>
+                        <option>tan</option>
+                    </select>
 				</li>
-               
-				<li><a href="#" id="changeConnectorColor"><span class="change-color">Change connector's color</span></a>
-		
-				<select id="favConnectorColor" onchange="changeConnectorColor()">
-				<option>green</option>
-				<option>white</option>
-				<option>blue</option>
-				<option>red</option>
-				<option>yellow</option>
-				<option>purple</option>
-				<option>grey</option>
-				<option>tan</option>
-				
-				</select>
+				<li class="nav-header">
+                    <a href="#" id="changeConnectorColor"><span class="change-color">Change connector's color</span></a>
+                    <select id="favConnectorColor" onchange="changeConnectorColor()">
+                        <option>green</option>
+                        <option>white</option>
+                        <option>blue</option>
+                        <option>red</option>
+                        <option>yellow</option>
+                        <option>purple</option>
+                        <option>grey</option>
+                        <option>tan</option>
+                    </select>
 				</li>
-                <li class="nav-header">Do something else</li>
-                <li><a href="#">Make a sandwich</a></li>
-                <li><a href="#">Take a shower</a></li>
             </ul>
         </aside>
 
@@ -359,7 +147,7 @@
             -->
         <div ng-controller="CanvasPresenter" id="theCanvas" class="span10">
             <canvas id="drawing" width="578" height="200"></canvas>
-            <input ng-model="title" value="{{title}}" id="argumentTitle" placeholder="Title of the argument" />
+            <input ng-model="title" id="argumentTitle" placeholder="Title of the argument" />
             <!-- Note: premise element defined by a Directive in canvasController.js -->
 
             <premise-container ng-repeat="container in containers" model="container">
