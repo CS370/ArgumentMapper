@@ -244,6 +244,13 @@
             left: 0;
             top: 50%;
         }
+		
+		select, option{
+		width: 90%;
+		}
+		
+		
+	
     </style>
 </head>
 
@@ -301,7 +308,35 @@
                 <li class="nav-header">Add an element</li>
                 <li><a href="#" id="addNewPremise"><span class="premise-demo">Add a premise box</span></a></li>
                 <li><a href="#" id="addNewRebuttal"><span class="rebuttal-demo">Add a rebuttal box</span></a></li>
+				<li><a href="#" id="changeColor"><span class="change-color">Change the premise color</span></a>
+		
+				<select id="favColor" onchange="changeNewColor()">
+				<option>white</option>
+				<option>green</option>
+				<option>blue</option>
+				<option>red</option>
+				<option>yellow</option>
+				<option>purple</option>
+				<option>grey</option>
+				<option>tan</option>
+				
+				</select>
+				</li>
                 <li><a href="#" id="addNewConnector">Add a connector</a></li>
+				<li><a href="#" id="changeConnectorColor"><span class="change-color">Change connector's color</span></a>
+		
+				<select id="favConnectorColor" onchange="changeConnectorColor()">
+				<option>green</option>
+				<option>white</option>
+				<option>blue</option>
+				<option>red</option>
+				<option>yellow</option>
+				<option>purple</option>
+				<option>grey</option>
+				<option>tan</option>
+				
+				</select>
+				</li>
                 <li class="nav-header">Do something else</li>
                 <li><a href="#">Make a sandwich</a></li>
                 <li><a href="#">Take a shower</a></li>

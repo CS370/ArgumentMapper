@@ -164,7 +164,8 @@ function drawConnection(connector){
         context.strokeStyle = '#333';
         context.stroke();
 
-        context.fillStyle = '#51a351';
+		var color = $(".connector").css("background-color");
+        context.fillStyle = color;
         context.fill();
 
         context.closePath();
@@ -321,6 +322,8 @@ function bindCloseConnectorEventHandler() {
 function bindToolbarEventHandlers() {
     $("#addNewPremise").click(function() {
         scope.argumentData.addPremise();
+		changeNewColor();
+		redrawCanvas();
     });
     $("#addNewRebuttal").click(function() {
         scope.argumentData.addPremise(true);
@@ -328,6 +331,8 @@ function bindToolbarEventHandlers() {
     $("#addNewConnector").click(function() {
         scope.argumentData.addConnector();
         scope.$apply();
+		changeConnectorColor();
+		
         redrawCanvas();
     });
 }
@@ -425,6 +430,40 @@ function makePremisesDroppable() {
         }
     });
 }
+/**
+*Changes the color of premise
+*/
+function changeNewColor(){
+var mylist=document.getElementById("favColor");
+var color = mylist.options[mylist.selectedIndex].text;
+
+$(".premise").css("background-color", color);
+$(".premise").css("background-image", "linear-gradient(to bottom, " + color + ", #d9d9d9)");
+ console.log(color);
+
+redrawCanvas();
+
+}
+
+/**
+*Changes the color of connector
+*/
+function changeConnectorColor(){
+var mylist=document.getElementById("favConnectorColor");
+var color = mylist.options[mylist.selectedIndex].text;
+
+$(".connector").css("background-color", color);
+$(".connector").css("background-image", "-moz-linear-gradient(top,"+color+","+color+")");
+$(".connector").css("background-image", "-webkit-gradient(linear,0 0,0 100%,from("+color+"),to("+color+"))");
+$(".connector").css("background-image", "-webkit-linear-gradient(top,"+color+","+color+")");
+$(".connector").css("background-image", "-o-linear-gradient(top,"+color+","+color+")");
+$(".connector").css("background-image", "linear-gradient(to bottom,"+color+","+color+")");
+ console.log(color);
+
+redrawCanvas();
+
+}
+
 /**
  * Handles the setup of the user interface components
  */
