@@ -379,6 +379,8 @@ function makePremisesDroppable() {
                 }
 
                 scope.$apply();
+				changePremiseColor();
+				changeRebuttalColor();
                 redrawCanvas();
                 bindHandlersForPremises();
             }
@@ -388,6 +390,7 @@ function makePremisesDroppable() {
         console.log("If you're running a unit test, this is perfectly normal; otherwise, something awful has happened!");
     }
 }
+
 
 function bindHandlersForPremises() {
     makeTextareaAutoResize();
@@ -420,15 +423,30 @@ function updateFromModel() {
 /**
 *Changes the color of premise
 */
-function changeNewColor(){
-    var mylist = document.getElementById("favColor");
+function changePremiseColor(){
+    var mylist = document.getElementById("PremiseColor");
     var color = mylist.options[mylist.selectedIndex].text;
+	var rebuttalColor = $(".rebuttal").css("background-color");
+	var rebuttalImage = $(".rebuttal").css("background-image");
 
-    $(".premise").css({
-        "background-color": color,
-        "background-image": "linear-gradient(to bottom, " + color + ", #d9d9d9)"
-    });
+	if(color != "White")
+	{
+		$(".premise").css({
+			"background-color": color,
+			"background-image": "linear-gradient(to bottom, "+color+", "+"Dark"+color+")"
+		});
+	} else
+	{
+		$(".premise").css({
+			"background-color": "#fff",
+			"background-image": "linear-gradient(to bottom, #fff, #d9d9d9)"
+		});
+	}
 
+	$(".rebuttal").css({
+		"background-color": rebuttalColor,
+		"background-image": rebuttalImage,
+	});
     redrawCanvas();
 }
 
@@ -436,19 +454,66 @@ function changeNewColor(){
 *Changes the color of connector
 */
 function changeConnectorColor(){
-    var mylist = document.getElementById("favConnectorColor");
+    var mylist = document.getElementById("ConnectorColor");
+    var color = mylist.options[mylist.selectedIndex].text;
+	
+	if( color != "White")
+	{
+		$(".connector").css({
+			"background-color": color,
+			"background-image": "-moz-linear-gradient(top,"+color+","+"Dark"+color+")",
+			"background-image": "-webkit-gradient(linear,0 0,0 100%,from("+color+"),to("+"Dark"+color+"))",
+			"background-image": "-webkit-linear-gradient(top,"+color+","+"Dark"+color+")",
+			"background-image": "-o-linear-gradient(top,"+color+","+"Dark"+color+")",
+			"background-image": "linear-gradient(to bottom,"+color+","+"Dark"+color+")"
+		});
+	} else
+	{
+		$(".connector").css({
+			"background-color": color,
+			"background-image": "-moz-linear-gradient(top,#fff, #d9d9d9)",
+			"background-image": "-webkit-gradient(linear,0 0,0 100%,from(#fff),to(#d9d9d9))",
+			"background-image": "-webkit-linear-gradient(top,#fff, #d9d9d9)",
+			"background-image": "-o-linear-gradient(top,#fff, #d9d9d9)",
+			"background-image": "linear-gradient(to bottom,#fff, #d9d9d9)"
+		});
+	}
+    redrawCanvas();
+}
+
+/**
+*Changes the color of rebuttal
+*/
+function changeRebuttalColor(){
+    var mylist = document.getElementById("RebuttalColor");
     var color = mylist.options[mylist.selectedIndex].text;
 
-    $(".connector").css({
-        "background-color": color,
-        "background-image": "-moz-linear-gradient(top,"+color+","+color+")",
-        "background-image": "-webkit-gradient(linear,0 0,0 100%,from("+color+"),to("+color+"))",
-        "background-image": "-webkit-linear-gradient(top,"+color+","+color+")",
-        "background-image": "-o-linear-gradient(top,"+color+","+color+")",
-        "background-image": "linear-gradient(to bottom,"+color+","+color+")"
-    });
-
+	if( color != "Red" && color != "White")
+	{
+		$(".rebuttal").css({
+			"background-color": color,
+			"background-image": "linear-gradient(to bottom, " + color + ", "+"Dark"+color+")"
+		});
+	} else if (color != "White")
+	{
+		$(".rebuttal").css({
+			"background-color": "#da4f49",
+			"background-image": "linear-gradient(to bottom, #ee5f5b, #bd362f)"
+		});
+	} else
+	{
+		$(".rebuttal").css({
+			"background-color": "#fff",
+			"background-image": "linear-gradient(to bottom, #fff, #d9d9d9)"
+		});
+	}
     redrawCanvas();
+}
+
+function resetLists() {
+	document.getElementById('PremiseColor').selectedIndex = 0;
+	document.getElementById('ConnectorColor').selectedIndex = 0;
+	document.getElementById('RebuttalColor').selectedIndex = 0;
 }
 
 /**
