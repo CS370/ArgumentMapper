@@ -276,6 +276,7 @@ function makeCanvasDroppable() {
             else {
                 scope.argumentData.addPremise(false, ui.offset);
             }
+			redrawCanvas();
         }
     });
 }
@@ -403,7 +404,10 @@ function bindHandlersForPremises() {
  * Performs all drawing actions. Must be called each time you update anything on the canvas element.
  */
 function redrawCanvas() {
-    drawConnections();
+	changePremiseColor();
+	changeConnectorColor();
+	changeRebuttalColor();
+	drawConnections();
 }
 
 /**
@@ -431,7 +435,7 @@ function changePremiseColor(){
 
 	if(color != "White")
 	{
-		$(".premise").css({
+		$(".premise, .premise-demo").css({
 			"background-color": color,
 			"background-image": "linear-gradient(to bottom, "+color+", "+"Dark"+color+")"
 		});
@@ -443,11 +447,10 @@ function changePremiseColor(){
 		});
 	}
 
-	$(".rebuttal").css({
+	$(".rebuttal, .rebuttal-demo").css({
 		"background-color": rebuttalColor,
 		"background-image": rebuttalImage,
 	});
-    redrawCanvas();
 }
 
 /**
@@ -478,7 +481,6 @@ function changeConnectorColor(){
 			"background-image": "linear-gradient(to bottom,#fff, #d9d9d9)"
 		});
 	}
-    redrawCanvas();
 }
 
 /**
@@ -490,24 +492,23 @@ function changeRebuttalColor(){
 
 	if( color != "Red" && color != "White")
 	{
-		$(".rebuttal").css({
+		$(".rebuttal, .rebuttal-demo").css({
 			"background-color": color,
 			"background-image": "linear-gradient(to bottom, " + color + ", "+"Dark"+color+")"
 		});
 	} else if (color != "White")
 	{
-		$(".rebuttal").css({
+		$(".rebuttal, .rebuttal-demo").css({
 			"background-color": "#da4f49",
 			"background-image": "linear-gradient(to bottom, #ee5f5b, #bd362f)"
 		});
 	} else
 	{
-		$(".rebuttal").css({
+		$(".rebuttal, .rebuttal-demo").css({
 			"background-color": "#fff",
 			"background-image": "linear-gradient(to bottom, #fff, #d9d9d9)"
 		});
 	}
-    redrawCanvas();
 }
 
 function resetLists() {

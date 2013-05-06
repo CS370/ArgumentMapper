@@ -109,7 +109,7 @@
                 <li><a href="#" id="addNewConnector">Add a connector</a></li>
 				<li class="nav-header">
                     <a href="#" id="changePremiseColor"><span class="change-color">Change Premise color</span></a>
-                    <select id="PremiseColor" onchange="changePremiseColor()">
+                    <select id="PremiseColor" onchange="redrawCanvas()">
                         <option selected>White</option>
                         <option>Green</option>
                         <option>Blue</option>
@@ -121,7 +121,7 @@
 				</li>
 				<li class="nav-header">
                     <a href="#" id="changeConnectorColor"><span class="change-color">Change Connector color</span></a>
-                    <select id="ConnectorColor" onchange="changeConnectorColor()">
+                    <select id="ConnectorColor" onchange="redrawCanvas()">
                         <option selected>Green</option>
                         <option>White</option>
                         <option>Blue</option>
@@ -133,7 +133,7 @@
 				</li>
 				<li class="nav-header">
                     <a href="#" id="changeRebuttalColor"><span class="change-color">Change Rebuttal color</span></a>
-                    <select id="RebuttalColor" onchange="changeRebuttalColor()">
+                    <select id="RebuttalColor" onchange="redrawCanvas()">
                         <option selected>Red</option>
                         <option>Green</option>
                         <option>Blue</option>
