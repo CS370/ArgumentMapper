@@ -10,3 +10,5 @@ Tools we use whose documentation you may find helpful (listed in order of helpfu
 - [jQuery, the write-less, do-more Javascript framework](http://jquery.com/). jQuery is Javascript++.
 - [Angular.JS](http://angularjs.org/), an MVC/MVP framework for Javascript.
 - Some to-be-determined NoSQL database.
+
+[Find the demo video on YouTube](http://www.youtube.com/watch?v=8pb62D6Dwdg)

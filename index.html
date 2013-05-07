@@ -91,6 +91,7 @@
                     </ul>
                     <ul class="nav pull-right" id="main-menu-right">
                         <li><a rel="tooltip" target="_blank" href="https://github.com/CS370/ArgumentMapper/" title="View on GitHub">View on GitHub <i class="icon-share-alt"></i></a></li>
+                        <li><a rel="tooltip" target="_blank" href="http://www.youtube.com/v/8pb62D6Dwdg" title="Watch the intro video">Watch the intro video <i class="icon-share-alt"></i></a></li>
                     </ul>
                 </div>
             </div>
@@ -143,6 +144,7 @@
                         <option>Khaki</option>
                     </select>
 				</li>
+                <li style="margin-top:5em;"><a href="http://www.youtube.com/v/8pb62D6Dwdg" target="_blank">Stuck? Watch the 3 minute intro video!</a></li>
             </ul>
         </aside>
 		<script>resetLists()</script>
@@ -165,7 +167,6 @@
                 <premise ng-repeat="premise in container.premises" model="premise">
                     <button class="close">&times;</button>
                     <textarea type="text" placeholder="Type your premise here" class="premise-title" rows="1" ng-model="premise.title"></textarea>
-                    <p>{{title}}</p>
                 </premise>
             </premise-container>
 
